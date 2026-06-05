@@ -9,8 +9,13 @@ exports.main = async (event, context) => {
   const { activityId, role = 'viewer', bookId = null } = event
 
   try {
-    const userRes = await db.collection('users').where({ openId: OPENID }).get()
-    if (userRes.data.length === 0) return { success: false, error: '用户未登录' }
+    let userRes = await db.collection('users').where({ openId: OPENID }).get()
+    if (userRes.data.length === 0) {
+      await db.collection('users').add({
+        data: { openId: OPENID, nickName: '微信用户', avatarUrl: '', role: 'viewer', createTime: db.serverDate() }
+      })
+      userRes = await db.collection('users').where({ openId: OPENID }).get()
+    }
     const userId = userRes.data[0]._id
 
     // 检查是否已经是成员

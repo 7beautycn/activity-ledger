@@ -10,10 +10,20 @@ exports.main = async (event, context) => {
   const { status = 'active' } = event
 
   try {
-    // 获取用户
-    const userRes = await db.collection('users').where({ openId: OPENID }).get()
+    // 获取或创建用户
+    let userRes = await db.collection('users').where({ openId: OPENID }).get()
     if (userRes.data.length === 0) {
-      return { activities: [] }
+      // 首次访问，自动创建用户记录
+      const addRes = await db.collection('users').add({
+        data: {
+          openId: OPENID,
+          nickName: '微信用户',
+          avatarUrl: '',
+          role: 'viewer',
+          createTime: db.serverDate()
+        }
+      })
+      userRes = await db.collection('users').where({ openId: OPENID }).get()
     }
     const userId = userRes.data[0]._id
 

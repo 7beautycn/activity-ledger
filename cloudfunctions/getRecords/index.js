@@ -11,8 +11,13 @@ exports.main = async (event, context) => {
 
   try {
     // 获取用户
-    const userRes = await db.collection('users').where({ openId: OPENID }).get()
-    if (userRes.data.length === 0) return { records: [], summary: {} }
+    let userRes = await db.collection('users').where({ openId: OPENID }).get()
+    if (userRes.data.length === 0) {
+      await db.collection('users').add({
+        data: { openId: OPENID, nickName: '微信用户', avatarUrl: '', role: 'viewer', createTime: db.serverDate() }
+      })
+      userRes = await db.collection('users').where({ openId: OPENID }).get()
+    }
     const userId = userRes.data[0]._id
 
     // 获取账本信息

@@ -18,8 +18,13 @@ exports.main = async (event, context) => {
 
   try {
     // 校验权限：只有活动主事人可创建
-    const userRes = await db.collection('users').where({ openId: OPENID }).get()
-    if (userRes.data.length === 0) return { success: false, error: '用户未登录' }
+    let userRes = await db.collection('users').where({ openId: OPENID }).get()
+    if (userRes.data.length === 0) {
+      await db.collection('users').add({
+        data: { openId: OPENID, nickName: '微信用户', avatarUrl: '', role: 'viewer', createTime: db.serverDate() }
+      })
+      userRes = await db.collection('users').where({ openId: OPENID }).get()
+    }
     const userId = userRes.data[0]._id
 
     const memberRes = await db.collection('members').where({ activityId, userId, roleInActivity: 'admin' }).get()

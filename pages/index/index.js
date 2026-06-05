@@ -1,11 +1,8 @@
 // pages/index/index.js
-const app = getApp()
 const util = require('../../utils/util')
 
 Page({
   data: {
-    userInfo: {},
-    isLoggedIn: false,
     activeTab: 'active',
     activities: [],
     loading: true,
@@ -20,58 +17,11 @@ Page({
   },
 
   onLoad() {
-    this.initLogin()
+    this.loadActivities()
   },
 
   onShow() {
-    // 每次显示页面时刷新登录状态和活动列表
-    this.syncLoginState()
-    if (app.globalData.isLoggedIn) {
-      this.loadActivities()
-    }
-  },
-
-  // 初始化登录
-  async initLogin() {
-    try {
-      await app.ensureLogin()
-      this.syncLoginState()
-      this.loadActivities()
-    } catch (err) {
-      console.error('登录失败', err)
-      this.setData({ loading: false })
-    }
-  },
-
-  // 同步登录状态到页面 data
-  syncLoginState() {
-    const userInfo = app.globalData.userInfo
-    const isLoggedIn = app.globalData.isLoggedIn
-    this.setData({
-      userInfo: userInfo || {},
-      isLoggedIn: !!isLoggedIn
-    })
-  },
-
-  // 点击用户区域 → 如果未登录则触发登录
-  async onTapUser() {
-    if (this.data.isLoggedIn) {
-      // 已登录，可以跳转到个人信息页（暂未实现，仅提示）
-      util.showToast('已登录：' + (this.data.userInfo.nickName || '微信用户'))
-      return
-    }
-    // 未登录，重新登录
-    util.showLoading('登录中...')
-    try {
-      await app.ensureLogin()
-      this.syncLoginState()
-      this.loadActivities()
-      util.showToast('登录成功', 'success')
-    } catch (err) {
-      console.error('登录失败', err)
-      util.showToast('登录失败，请重试')
-    }
-    util.hideLoading()
+    this.loadActivities()
   },
 
   // 切换Tab
@@ -101,12 +51,8 @@ Page({
     util.hideLoading()
   },
 
-  // 显示创建弹窗（先检查登录状态）
+  // 显示创建弹窗
   showCreateDialog() {
-    if (!this.data.isLoggedIn) {
-      util.showToast('请先点击上方头像登录')
-      return
-    }
     this.setData({ showCreate: true })
   },
 
@@ -133,10 +79,6 @@ Page({
 
   // 创建活动
   async createActivity() {
-    if (!this.data.isLoggedIn) {
-      util.showToast('请先登录')
-      return
-    }
     const { name, startDate } = this.data.newActivity
     if (!name.trim()) {
       util.showToast('请输入活动名称')

@@ -1,15 +1,4 @@
 /** pages/index/index.wxss **/
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--weui-BG-1);
-}
-
-.avatar-placeholder {
-  background: var(--weui-BG-2);
-}
-
 .tab-item {
   flex: 1;
   text-align: center;

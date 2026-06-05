@@ -9,8 +9,13 @@ exports.main = async (event, context) => {
   const { activityId } = event
 
   try {
-    const userRes = await db.collection('users').where({ openId: OPENID }).get()
-    if (userRes.data.length === 0) return { members: [], isAdmin: false }
+    let userRes = await db.collection('users').where({ openId: OPENID }).get()
+    if (userRes.data.length === 0) {
+      await db.collection('users').add({
+        data: { openId: OPENID, nickName: '微信用户', avatarUrl: '', role: 'viewer', createTime: db.serverDate() }
+      })
+      userRes = await db.collection('users').where({ openId: OPENID }).get()
+    }
     const userId = userRes.data[0]._id
 
     // 权限校验
