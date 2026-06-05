@@ -57,7 +57,7 @@
         </view>
 
         <view class="activity-body">
-          <view class="weui-cell weui-cell_access">
+          <view class="weui-cell activity-cell-row">
             <view class="weui-cell__bd">
               <view class="weui-cell_title">{{item.name}}</view>
               <view class="weui-cell_desc" style="margin-top:6px">
@@ -66,7 +66,7 @@
               </view>
             </view>
             <view class="weui-cell__ft activity-actions">
-              <view class="settings-btn" bindtap="onSettingsTap" data-id="{{item._id}}" catchtap="onSettingsTap">
+              <view class="settings-btn" catchtap="onSettingsTap" data-id="{{item._id}}">
                 <text class="settings-icon">⚙</text>
               </view>
             </view>

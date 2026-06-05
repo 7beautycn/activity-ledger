@@ -123,30 +123,35 @@
 }
 
 /* ===== 设置图标 ===== */
+.activity-cell-row {
+  align-items: center;
+  padding-right: 8px;
+}
+
 .activity-actions {
   display: flex;
   align-items: center;
-  padding-right: 0;
+  flex-shrink: 0;
 }
 
 .settings-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--weui-BG-1);
-  transition: background 0.2s;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--weui-BG-2);
+  border: 1px solid var(--weui-BG-1);
 }
 
 .settings-btn:active {
-  background: var(--weui-BG-2);
+  background: var(--weui-BG-1);
 }
 
 .settings-icon {
-  font-size: 18px;
-  color: var(--weui-FG-2);
+  font-size: 20px;
+  color: var(--weui-FG-1);
   line-height: 1;
 }
 
