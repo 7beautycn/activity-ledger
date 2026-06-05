@@ -24,9 +24,9 @@ Page({
   },
 
   onShow() {
-    // 每次显示页面时刷新登录状态
+    // 每次显示页面时刷新登录状态和活动列表
     this.syncLoginState()
-    if (this.data.isLoggedIn) {
+    if (app.globalData.isLoggedIn) {
       this.loadActivities()
     }
   },
