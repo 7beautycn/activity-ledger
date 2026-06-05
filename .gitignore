@@ -1,3 +1,7 @@
 .deploy
 .malagu
 .DS_Store
+node_modules/
+miniprogram_npm/
+*.zip
+cloudfunctions/**/node_modules/

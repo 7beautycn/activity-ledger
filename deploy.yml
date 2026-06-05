@@ -1,6 +1,0 @@
-entry: app/app.js  # 可选，项目入口文件
-runtime: default   # 必填，运行时,一般为 default
-mode:              # 必填，模式，目前有 static、node、unpackage 等多种模式，static 用于纯前端项目， node 用于 node 项目， unpackage 用于不能打包的项目，可多个模式进行组合
-  - node
-assets:            # 可选，资源目录，会拷贝到构建产物项目中一起上传
-  - app/assets

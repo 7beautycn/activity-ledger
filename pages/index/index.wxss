@@ -1,0 +1,43 @@
+/** pages/index/index.wxss **/
+.user-header {
+  margin-bottom: 10rpx;
+}
+
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: #e0e0e0;
+}
+
+.tab-bar {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  border-bottom: 4rpx solid transparent;
+  transition: all 0.3s;
+}
+
+.tab-active {
+  color: #1aad19;
+  border-bottom-color: #1aad19;
+  font-weight: 600;
+}
+
+.activity-card {
+  transition: all 0.2s;
+}
+
+.activity-card:active {
+  background: #f9f9f9;
+}

@@ -1,0 +1,109 @@
+<!--pages/book-detail/book-detail.wxml-->
+<view class="container">
+  <!-- 账本信息头部 -->
+  <view class="card">
+    <view class="flex-between">
+      <view>
+        <text class="card-title">{{bookName}}</text>
+        <view class="mt-10">
+          <text class="tag {{tagClass}}">{{typeLabel}}</text>
+        </view>
+      </view>
+      <view wx:if="{{bookType === 'main'}}" bindtap="goToStatistics">
+        <text class="text-green">统计 ></text>
+      </view>
+    </view>
+    
+    <!-- 主账本统计摘要 -->
+    <view wx:if="{{bookType === 'main'}}" class="flex-row mt-20" style="justify-content:space-around">
+      <view class="text-center">
+        <text class="text-gray" style="font-size:22rpx">总收入</text>
+        <view class="text-green amount-large">{{util.formatMoney(summary.totalIncome)}}</view>
+      </view>
+      <view class="text-center">
+        <text class="text-gray" style="font-size:22rpx">总支出</text>
+        <view class="text-red amount-large">{{util.formatMoney(summary.totalExpense)}}</view>
+      </view>
+      <view class="text-center">
+        <text class="text-gray" style="font-size:22rpx">结余</text>
+        <view class="amount-large" style="color:{{summary.balance >= 0 ? '#1aad19' : '#ee5a24'}}">{{util.formatMoney(summary.balance)}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar flex-row">
+    <picker range="{{filterOptions}}" value="{{filterIndex}}" bindchange="onFilterChange">
+      <view class="filter-item">{{filterOptions[filterIndex]}}</view>
+    </picker>
+  </view>
+
+  <!-- 流水列表 -->
+  <view wx:if="{{loading}}">
+    <view class="empty-state"><text>加载中...</text></view>
+  </view>
+
+  <block wx:elif="{{records.length > 0}}">
+    <view class="record-card card" wx:for="{{records}}" wx:key="_id">
+      <view class="flex-between">
+        <view class="flex-row">
+          <text class="record-type-icon">{{item.type === 'income' ? '↓' : '↑'}}</text>
+          <view class="ml-10">
+            <text class="text-bold">{{item.person || item.category || '未知'}}</text>
+            <text class="text-gray" style="font-size:22rpx;display:block">{{item.remark || ''}}</text>
+          </view>
+        </view>
+        <view>
+          <text class="{{item.type === 'income' ? 'text-green' : 'text-red'}}" style="font-size:32rpx;font-weight:600">
+            {{item.type === 'income' ? '+' : '-'}}{{util.formatMoney(item.amount)}}
+          </text>
+        </view>
+      </view>
+      
+      <!-- 物品明细 -->
+      <view wx:if="{{item.items && item.items.length > 0}}" class="items-row mt-10">
+        <block wx:for="{{item.items}}" wx:key="name" wx:for-item="it">
+          <text class="text-gray" style="font-size:22rpx">{{it.name}} x{{it.quantity}}{{it.unit || ''}} </text>
+        </block>
+      </view>
+
+      <!-- 付款方式 -->
+      <view wx:if="{{item.paymentMethod}}" class="mt-10">
+        <text class="tag" style="background:#f0f0f0;color:#666">{{item.paymentMethod}}</text>
+      </view>
+
+      <view class="flex-between mt-10">
+        <text class="text-gray" style="font-size:22rpx">{{item.createdAtStr}}</text>
+        <view wx:if="{{canDelete}}" bindtap="deleteRecord" data-id="{{item._id}}">
+          <text class="text-red" style="font-size:22rpx">删除</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 加载更多 -->
+    <view wx:if="{{hasMore}}" class="text-center mt-20 mb-20">
+      <text class="text-gray" bindtap="loadMore">加载更多</text>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="empty-state">
+      <text>暂无记录</text>
+      <text class="mt-10 text-gray" style="font-size:24rpx">点击下方按钮开始记账</text>
+    </view>
+  </block>
+
+  <!-- 底部操作按钮 -->
+  <view class="fixed-bottom flex-row" style="justify-content:space-around">
+    <button wx:if="{{canWrite && bookType === 'main'}}" class="btn-primary" bindtap="goToRecord" data-type="income">记收入</button>
+    <button wx:if="{{canWrite && bookType === 'main'}}" class="btn-warning" bindtap="goToRecord" data-type="expense">记支出</button>
+    <button wx:if="{{canWrite && bookType === 'main'}}" class="btn-outline" bindtap="goToRecord" data-type="stockin">物品入库</button>
+    
+    <button wx:if="{{canWrite && bookType === 'gift'}}" class="btn-primary" bindtap="goToRecord" data-type="gift">登记收礼</button>
+    <button wx:if="{{canWrite && bookType === 'gift'}}" class="btn-warning" bindtap="goToSettle">结账</button>
+    
+    <button wx:if="{{canWrite && bookType === 'warehouse'}}" class="btn-primary" bindtap="goToRecord" data-type="stockin">物品入库</button>
+    <button wx:if="{{canWrite && bookType === 'warehouse'}}" class="btn-warning" bindtap="goToRecord" data-type="stockout">物品出库</button>
+    <button wx:if="{{canWrite && bookType === 'warehouse'}}" class="btn-danger" bindtap="goToSettle">结账</button>
+  </view>
+</view>

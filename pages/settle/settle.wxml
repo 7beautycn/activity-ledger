@@ -1,0 +1,89 @@
+<!--pages/settle/settle.wxml-->
+<view class="container">
+  <!-- 摘要 -->
+  <view class="card">
+    <text class="card-title">结账</text>
+    <view wx:if="{{bookType === 'gift'}}" class="mt-20">
+      <view class="flex-between mb-10">
+        <text class="text-gray">未结现金</text>
+        <text class="text-green text-bold" style="font-size:36rpx">{{util.formatMoney(summary.unsettledCash)}}</text>
+      </view>
+      <view class="flex-between mb-10">
+        <text class="text-gray">已收礼品</text>
+        <text class="text-blue text-bold">{{summary.totalGiftCount || 0}} 件</text>
+      </view>
+    </view>
+    <view wx:if="{{bookType === 'warehouse'}}" class="mt-20">
+      <view class="flex-between mb-10">
+        <text class="text-gray">当前库存</text>
+        <text class="text-orange text-bold">{{summary.totalStock || 0}} 件</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结账表单 -->
+  <view class="card mt-20">
+    <block wx:if="{{bookType === 'gift'}}">
+      <view class="form-item">
+        <text class="form-label">转交现金金额 *</text>
+        <input class="form-input" type="digit" placeholder="不超过未结现金" value="{{settleCash}}" bindinput="onCashInput" />
+        <text class="text-gray" style="font-size:22rpx">可用现金：{{util.formatMoney(summary.unsettledCash)}}</text>
+      </view>
+    </block>
+
+    <view class="form-item">
+      <view class="flex-between">
+        <text class="form-label">转交物品清单</text>
+        <text class="text-green" style="font-size:24rpx" bindtap="addItem">+ 添加</text>
+      </view>
+      <block wx:for="{{settleItems}}" wx:key="index">
+        <view class="settle-item">
+          <view class="flex-between mb-10">
+            <text>物品 {{index + 1}}</text>
+            <text class="text-red" bindtap="removeItem" data-index="{{index}}" style="font-size:22rpx">删除</text>
+          </view>
+          <input class="form-input mb-10" placeholder="物品名称" value="{{item.name}}" bindinput="onItemInput" data-index="{{index}}" data-field="name" />
+          <input class="form-input" type="number" placeholder="数量" value="{{item.quantity}}" bindinput="onItemInput" data-index="{{index}}" data-field="quantity" />
+        </view>
+      </block>
+
+      <!-- 从已有礼品/库存中选择 -->
+      <view wx:if="{{availableItems.length > 0}}" class="mt-20">
+        <text class="text-gray mb-10" style="display:block;font-size:24rpx">从已有{{bookType === 'gift' ? '礼品' : '库存'}}中选择：</text>
+        <block wx:for="{{availableItems}}" wx:key="name">
+          <view class="flex-between pick-item" bindtap="pickFromAvailable" data-item="{{item}}">
+            <text>{{item.name}}</text>
+            <text class="text-gray">x{{item.total}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结账单预览 -->
+  <view wx:if="{{settleResult}}" class="card mt-20">
+    <text class="card-title">结账单</text>
+    <view class="divider"></view>
+    <view class="flex-between mb-10">
+      <text>转交现金</text>
+      <text class="text-green text-bold">{{util.formatMoney(settleResult.cashAmount)}}</text>
+    </view>
+    <view class="mb-10" wx:if="{{settleResult.items.length > 0}}">
+      <text>转交物品：</text>
+      <block wx:for="{{settleResult.items}}" wx:key="name">
+        <text class="text-gray" style="font-size:24rpx">{{item.name}} x{{item.quantity}}  </text>
+      </block>
+    </view>
+    <view class="flex-between">
+      <text class="text-gray">操作时间</text>
+      <text>{{settleResult.transferTime || ''}}</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="mt-30 mb-30 flex-row" style="justify-content:space-around">
+    <button wx:if="{{!settleResult}}" class="btn-primary" bindtap="doSettle" loading="{{settling}}">确认结账</button>
+    <button wx:if="{{settleResult}}" class="btn-outline mr-10" bindtap="previewSettle">预览结账单</button>
+    <button wx:if="{{settleResult}}" class="btn-primary" bindtap="exportSettleImage">导出为图片</button>
+  </view>
+</view>

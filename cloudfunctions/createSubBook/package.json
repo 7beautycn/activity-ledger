@@ -1,0 +1,9 @@
+{
+  "name": "createSubBook",
+  "version": "1.0.0",
+  "description": "创建子账本",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

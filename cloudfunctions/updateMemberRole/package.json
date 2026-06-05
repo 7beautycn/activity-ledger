@@ -1,0 +1,9 @@
+{
+  "name": "updateMemberRole",
+  "version": "1.0.0",
+  "description": "修改成员角色",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,108 @@
+<!--pages/statistics/statistics.wxml-->
+<view class="container">
+  <view class="card">
+    <text class="card-title">统计概览</text>
+    
+    <view class="flex-row mt-20" style="justify-content:space-around">
+      <view class="text-center">
+        <text class="text-gray" style="font-size:22rpx">总收入</text>
+        <view class="text-green amount-large">{{util.formatMoney(stats.totalIncome)}}</view>
+      </view>
+      <view class="text-center">
+        <text class="text-gray" style="font-size:22rpx">总支出</text>
+        <view class="text-red amount-large">{{util.formatMoney(stats.totalExpense)}}</view>
+      </view>
+      <view class="text-center">
+        <text class="text-gray" style="font-size:22rpx">结余</text>
+        <view class="amount-large" style="color:{{stats.balance >= 0 ? '#1aad19' : '#ee5a24'}}">
+          {{util.formatMoney(stats.balance)}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 支出分类汇总 -->
+  <view class="card mt-20" wx:if="{{stats.categorySummary && stats.categorySummary.length > 0}}">
+    <text class="card-title">支出分类汇总</text>
+    <view class="mt-10" wx:for="{{stats.categorySummary}}" wx:key="category">
+      <view class="flex-between category-bar">
+        <view class="flex-row">
+          <text>{{item.category}}</text>
+        </view>
+        <view class="flex-row">
+          <text class="text-red text-bold">{{util.formatMoney(item.total)}}</text>
+          <text class="text-gray ml-10" style="font-size:22rpx">{{item.percent}}%</text>
+        </view>
+      </view>
+      <view class="progress-bar mt-10">
+        <view class="progress-fill" style="width:{{item.percent}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 物品消耗汇总（总账本） -->
+  <view class="card mt-20" wx:if="{{bookType === 'main' && stats.itemSummary && stats.itemSummary.length > 0}}">
+    <text class="card-title">物品消耗汇总</text>
+    <view class="mt-10">
+      <view class="flex-between item-row" wx:for="{{stats.itemSummary}}" wx:key="name">
+        <text>{{item.name}}</text>
+        <text class="text-blue text-bold">{{item.totalQuantity}} {{item.unit || '个'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收礼账本统计 -->
+  <block wx:if="{{bookType === 'gift'}}">
+    <view class="card mt-20">
+      <text class="card-title">礼金统计</text>
+      <view class="mt-10">
+        <view class="flex-between mb-10">
+          <text>礼金总额</text>
+          <text class="text-green text-bold">{{util.formatMoney(stats.giftTotal)}}</text>
+        </view>
+        <view class="flex-between mb-10">
+          <text>已结转出</text>
+          <text class="text-red text-bold">{{util.formatMoney(stats.settledCash)}}</text>
+        </view>
+        <view class="flex-between">
+          <text>未结现金</text>
+          <text class="text-orange text-bold">{{util.formatMoney(stats.unsettledCash)}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card mt-20" wx:if="{{stats.giftSummary && stats.giftSummary.length > 0}}">
+      <text class="card-title">礼品汇总</text>
+      <view class="mt-10">
+        <view class="flex-between item-row" wx:for="{{stats.giftSummary}}" wx:key="name">
+          <text>{{item.name}}</text>
+          <text class="text-blue text-bold">x{{item.totalQuantity}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 仓库账本统计 -->
+  <block wx:if="{{bookType === 'warehouse'}}">
+    <view class="card mt-20">
+      <text class="card-title">库存明细</text>
+      <view wx:if="{{stats.inventory && stats.inventory.length > 0}}" class="mt-10">
+        <view class="inventory-row flex-between" wx:for="{{stats.inventory}}" wx:key="name">
+          <view>
+            <text class="text-bold">{{item.name}}</text>
+            <text class="text-gray ml-10" style="font-size:22rpx">{{item.unit || '个'}}</text>
+          </view>
+          <text class="text-bold" style="color:{{item.stock > 0 ? '#1aad19' : '#ee5a24'}}">
+            {{item.stock}}
+          </text>
+        </view>
+      </view>
+      <view wx:else class="text-center text-gray mt-20">暂无库存</view>
+    </view>
+  </block>
+
+  <!-- 导出按钮 -->
+  <view class="mt-30 mb-30" wx:if="{{bookType === 'main'}}">
+    <button class="btn-outline" style="width:100%" bindtap="exportCSV">导出为 CSV</button>
+  </view>
+</view>

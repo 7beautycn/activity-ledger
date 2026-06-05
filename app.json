@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/activity-detail/activity-detail",
+    "pages/book-detail/book-detail",
+    "pages/record-form/record-form",
+    "pages/statistics/statistics",
+    "pages/members/members",
+    "pages/settle/settle"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1aad19",
+    "navigationBarTitleText": "公共活动共享账本",
+    "navigationBarTextStyle": "white"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "cloud": true
+}
