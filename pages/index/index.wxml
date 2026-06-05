@@ -1,15 +1,15 @@
 <!--pages/index/index.wxml-->
 <view class="container">
-  <!-- 用户信息头部 -->
-  <view class="weui-panel">
-    <view class="weui-cell">
+  <!-- 用户信息头部（可点击） -->
+  <view class="weui-panel" bindtap="onTapUser">
+    <view class="weui-cell weui-cell_access">
       <view class="weui-cell__hd">
         <image wx:if="{{userInfo.avatarUrl}}" class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
         <view wx:else class="avatar avatar-placeholder"></view>
       </view>
       <view class="weui-cell__bd">
-        <view class="weui-cell_title">{{userInfo.nickName || '未登录'}}</view>
-        <view class="weui-cell_desc">{{userInfo.role || ''}}</view>
+        <view class="weui-cell_title">{{isLoggedIn ? userInfo.nickName : '点击登录'}}</view>
+        <view class="weui-cell_desc">{{isLoggedIn ? '已登录' : '未登录，点击登录以使用全部功能'}}</view>
       </view>
     </view>
   </view>
@@ -70,7 +70,8 @@
 
   <!-- 底部创建按钮 -->
   <view class="weui-bottom-bar">
-    <button class="weui-btn weui-btn_primary weui-btn_block" bindtap="showCreateDialog">+ 创建活动</button>
+    <button wx:if="{{isLoggedIn}}" class="weui-btn weui-btn_primary weui-btn_block" bindtap="showCreateDialog">+ 创建活动</button>
+    <button wx:else class="weui-btn weui-btn_primary weui-btn_block" disabled>请先登录后再创建活动</button>
   </view>
 </view>
 
