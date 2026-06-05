@@ -21,7 +21,8 @@
     <view class="weui-panel" wx:for="{{members}}" wx:key="userId">
       <view class="weui-cell">
         <view class="weui-cell__hd">
-          <image class="avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+          <image wx:if="{{item.avatarUrl}}" class="avatar" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+          <view wx:else class="avatar avatar-placeholder"></view>
         </view>
         <view class="weui-cell__bd">
           <view class="weui-cell_title">{{item.nickName || '未知用户'}}</view>

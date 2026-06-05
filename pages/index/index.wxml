@@ -4,7 +4,8 @@
   <view class="weui-panel">
     <view class="weui-cell">
       <view class="weui-cell__hd">
-        <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        <image wx:if="{{userInfo.avatarUrl}}" class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+        <view wx:else class="avatar avatar-placeholder"></view>
       </view>
       <view class="weui-cell__bd">
         <view class="weui-cell_title">{{userInfo.nickName || '未登录'}}</view>

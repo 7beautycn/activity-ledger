@@ -6,6 +6,10 @@
   background: var(--weui-BG-1);
 }
 
+.avatar-placeholder {
+  background: var(--weui-BG-2);
+}
+
 .tab-item {
   flex: 1;
   text-align: center;
