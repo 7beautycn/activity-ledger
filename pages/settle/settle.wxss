@@ -1,18 +1,2 @@
 /** pages/settle/settle.wxss **/
-.settle-item {
-  background: #f9f9f9;
-  border-radius: 12rpx;
-  padding: 20rpx;
-  margin-bottom: 16rpx;
-}
-
-.pick-item {
-  background: #f0f7ff;
-  border-radius: 8rpx;
-  padding: 16rpx 20rpx;
-  margin-bottom: 10rpx;
-}
-
-.pick-item:active {
-  background: #e0efff;
-}
+/* 使用全局 WeUI 样式 */

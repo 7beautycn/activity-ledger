@@ -1,109 +1,118 @@
 <!--pages/book-detail/book-detail.wxml-->
-<view class="container">
-  <!-- 账本信息头部 -->
-  <view class="card">
-    <view class="flex-between">
-      <view>
-        <text class="card-title">{{bookName}}</text>
-        <view class="mt-10">
-          <text class="tag {{tagClass}}">{{typeLabel}}</text>
+<view class="container page-body">
+  <!-- 账本头部 -->
+  <view class="weui-panel">
+    <view class="weui-cell">
+      <view class="weui-cell__bd">
+        <view class="weui-cell_title">{{bookName}}</view>
+        <view class="weui-cell_desc">
+          <text class="weui-tag {{tagClass}}">{{typeLabel}}</text>
         </view>
       </view>
-      <view wx:if="{{bookType === 'main'}}" bindtap="goToStatistics">
-        <text class="text-green">统计 ></text>
+      <view class="weui-cell__ft" wx:if="{{bookType === 'main'}}" bindtap="goToStatistics">
+        <text class="weui-text_link">统计</text>
       </view>
     </view>
     
     <!-- 主账本统计摘要 -->
-    <view wx:if="{{bookType === 'main'}}" class="flex-row mt-20" style="justify-content:space-around">
+    <view wx:if="{{bookType === 'main'}}" class="weui-stat-row">
       <view class="text-center">
-        <text class="text-gray" style="font-size:22rpx">总收入</text>
-        <view class="text-green amount-large">{{util.formatMoney(summary.totalIncome)}}</view>
+        <view class="weui-stat-item__label">总收入</view>
+        <view class="weui-stat-item__value weui-text_green">{{util.formatMoney(summary.totalIncome)}}</view>
       </view>
       <view class="text-center">
-        <text class="text-gray" style="font-size:22rpx">总支出</text>
-        <view class="text-red amount-large">{{util.formatMoney(summary.totalExpense)}}</view>
+        <view class="weui-stat-item__label">总支出</view>
+        <view class="weui-stat-item__value weui-text_red">{{util.formatMoney(summary.totalExpense)}}</view>
       </view>
       <view class="text-center">
-        <text class="text-gray" style="font-size:22rpx">结余</text>
-        <view class="amount-large" style="color:{{summary.balance >= 0 ? '#1aad19' : '#ee5a24'}}">{{util.formatMoney(summary.balance)}}</view>
+        <view class="weui-stat-item__label">结余</view>
+        <view class="weui-stat-item__value" style="color:{{summary.balance >= 0 ? 'var(--weui-BRAND)' : 'var(--weui-RED)'}}">{{util.formatMoney(summary.balance)}}</view>
       </view>
     </view>
   </view>
 
   <!-- 筛选栏 -->
-  <view class="filter-bar flex-row">
+  <view class="weui-filter-bar">
     <picker range="{{filterOptions}}" value="{{filterIndex}}" bindchange="onFilterChange">
-      <view class="filter-item">{{filterOptions[filterIndex]}}</view>
+      <view class="weui-cell weui-cell_access">
+        <view class="weui-cell__bd">{{filterOptions[filterIndex]}}</view>
+      </view>
     </picker>
   </view>
 
-  <!-- 流水列表 -->
-  <view wx:if="{{loading}}">
-    <view class="empty-state"><text>加载中...</text></view>
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="weui-loadmore">
+    <text class="weui-loadmore__tips">加载中...</text>
   </view>
 
+  <!-- 流水列表 -->
   <block wx:elif="{{records.length > 0}}">
-    <view class="record-card card" wx:for="{{records}}" wx:key="_id">
-      <view class="flex-between">
-        <view class="flex-row">
-          <text class="record-type-icon">{{item.type === 'income' ? '↓' : '↑'}}</text>
-          <view class="ml-10">
-            <text class="text-bold">{{item.person || item.category || '未知'}}</text>
-            <text class="text-gray" style="font-size:22rpx;display:block">{{item.remark || ''}}</text>
-          </view>
+    <view class="weui-panel" wx:for="{{records}}" wx:key="_id">
+      <view class="weui-cell">
+        <view class="weui-cell__hd">
+          <text style="font-size:24px;font-weight:700;color:{{item.type === 'income' ? 'var(--weui-BRAND)' : 'var(--weui-RED)'}}">
+            {{item.type === 'income' ? '↓' : '↑'}}
+          </text>
         </view>
-        <view>
-          <text class="{{item.type === 'income' ? 'text-green' : 'text-red'}}" style="font-size:32rpx;font-weight:600">
+        <view class="weui-cell__bd">
+          <view class="weui-cell_title">{{item.person || item.category || '未知'}}</view>
+          <view wx:if="{{item.remark}}" class="weui-cell_desc">{{item.remark}}</view>
+        </view>
+        <view class="weui-cell__ft">
+          <text class="weui-amount_small {{item.type === 'income' ? 'weui-amount_income' : 'weui-amount_expense'}}">
             {{item.type === 'income' ? '+' : '-'}}{{util.formatMoney(item.amount)}}
           </text>
         </view>
       </view>
       
       <!-- 物品明细 -->
-      <view wx:if="{{item.items && item.items.length > 0}}" class="items-row mt-10">
+      <view wx:if="{{item.items && item.items.length > 0}}" style="padding:4px 16px 4px 56px">
         <block wx:for="{{item.items}}" wx:key="name" wx:for-item="it">
-          <text class="text-gray" style="font-size:22rpx">{{it.name}} x{{it.quantity}}{{it.unit || ''}} </text>
+          <text class="weui-text_tips">{{it.name}} x{{it.quantity}}{{it.unit || ''}} </text>
         </block>
       </view>
 
       <!-- 付款方式 -->
-      <view wx:if="{{item.paymentMethod}}" class="mt-10">
-        <text class="tag" style="background:#f0f0f0;color:#666">{{item.paymentMethod}}</text>
+      <view wx:if="{{item.paymentMethod}}" style="padding:4px 16px 4px 56px">
+        <text class="weui-tag weui-tag_default">{{item.paymentMethod}}</text>
       </view>
 
-      <view class="flex-between mt-10">
-        <text class="text-gray" style="font-size:22rpx">{{item.createdAtStr}}</text>
+      <view style="padding:8px 16px 12px 56px;display:flex;justify-content:space-between;align-items:center">
+        <text class="weui-text_tips">{{item.createdAtStr}}</text>
         <view wx:if="{{canDelete}}" bindtap="deleteRecord" data-id="{{item._id}}">
-          <text class="text-red" style="font-size:22rpx">删除</text>
+          <text class="weui-text_red" style="font-size:12px">删除</text>
         </view>
       </view>
     </view>
     
     <!-- 加载更多 -->
-    <view wx:if="{{hasMore}}" class="text-center mt-20 mb-20">
-      <text class="text-gray" bindtap="loadMore">加载更多</text>
+    <view wx:if="{{hasMore}}" class="weui-loadmore weui-loadmore_line">
+      <text class="weui-loadmore__tips" bindtap="loadMore">加载更多</text>
     </view>
   </block>
 
+  <!-- 空状态 -->
   <block wx:else>
-    <view class="empty-state">
-      <text>暂无记录</text>
-      <text class="mt-10 text-gray" style="font-size:24rpx">点击下方按钮开始记账</text>
+    <view class="weui-empty">
+      <view class="weui-empty__icon">📝</view>
+      <view class="weui-empty__text">暂无记录</view>
+      <view class="weui-empty__text" style="margin-top:4px">点击下方按钮开始记账</view>
     </view>
   </block>
 
   <!-- 底部操作按钮 -->
-  <view class="fixed-bottom flex-row" style="justify-content:space-around">
-    <button wx:if="{{canWrite && bookType === 'main'}}" class="btn-primary" bindtap="goToRecord" data-type="income">记收入</button>
-    <button wx:if="{{canWrite && bookType === 'main'}}" class="btn-warning" bindtap="goToRecord" data-type="expense">记支出</button>
-    <button wx:if="{{canWrite && bookType === 'main'}}" class="btn-outline" bindtap="goToRecord" data-type="stockin">物品入库</button>
-    
-    <button wx:if="{{canWrite && bookType === 'gift'}}" class="btn-primary" bindtap="goToRecord" data-type="gift">登记收礼</button>
-    <button wx:if="{{canWrite && bookType === 'gift'}}" class="btn-warning" bindtap="goToSettle">结账</button>
-    
-    <button wx:if="{{canWrite && bookType === 'warehouse'}}" class="btn-primary" bindtap="goToRecord" data-type="stockin">物品入库</button>
-    <button wx:if="{{canWrite && bookType === 'warehouse'}}" class="btn-warning" bindtap="goToRecord" data-type="stockout">物品出库</button>
-    <button wx:if="{{canWrite && bookType === 'warehouse'}}" class="btn-danger" bindtap="goToSettle">结账</button>
+  <view class="weui-bottom-bar">
+    <view class="weui-btn-group">
+      <button wx:if="{{canWrite && bookType === 'main'}}" class="weui-btn weui-btn_primary" bindtap="goToRecord" data-type="income">记收入</button>
+      <button wx:if="{{canWrite && bookType === 'main'}}" class="weui-btn weui-btn_warn" bindtap="goToRecord" data-type="expense">记支出</button>
+      <button wx:if="{{canWrite && bookType === 'main'}}" class="weui-btn weui-btn_default" bindtap="goToRecord" data-type="stockin">物品入库</button>
+      
+      <button wx:if="{{canWrite && bookType === 'gift'}}" class="weui-btn weui-btn_primary" bindtap="goToRecord" data-type="gift">登记收礼</button>
+      <button wx:if="{{canWrite && bookType === 'gift'}}" class="weui-btn weui-btn_warn" bindtap="goToSettle">结账</button>
+      
+      <button wx:if="{{canWrite && bookType === 'warehouse'}}" class="weui-btn weui-btn_primary" bindtap="goToRecord" data-type="stockin">物品入库</button>
+      <button wx:if="{{canWrite && bookType === 'warehouse'}}" class="weui-btn weui-btn_default" bindtap="goToRecord" data-type="stockout">物品出库</button>
+      <button wx:if="{{canWrite && bookType === 'warehouse'}}" class="weui-btn weui-btn_warn" bindtap="goToSettle">结账</button>
+    </view>
   </view>
 </view>

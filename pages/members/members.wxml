@@ -1,75 +1,87 @@
 <!--pages/members/members.wxml-->
 <view class="container">
-  <view class="card">
-    <text class="card-title">活动成员</text>
-    <text class="text-gray" style="font-size:24rpx">{{members.length}} 位成员</text>
+  <view class="weui-panel">
+    <view class="weui-cell">
+      <view class="weui-cell__bd">
+        <view class="weui-cell_title">活动成员</view>
+      </view>
+      <view class="weui-cell__ft">
+        <text class="weui-text_desc">{{members.length}} 位成员</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="weui-loadmore">
+    <text class="weui-loadmore__tips">加载中...</text>
   </view>
 
   <!-- 成员列表 -->
-  <view wx:if="{{loading}}">
-    <view class="empty-state"><text>加载中...</text></view>
-  </view>
-
   <block wx:elif="{{members.length > 0}}">
-    <view class="member-card card" wx:for="{{members}}" wx:key="userId">
-      <view class="flex-between">
-        <view class="flex-row">
-          <image class="member-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
-          <view class="ml-10">
-            <text class="text-bold">{{item.nickName || '未知用户'}}</text>
-            <view class="mt-10">
-              <text class="tag tag-{{item.roleInActivity === 'admin' ? 'main' : (item.roleInActivity === 'editor' ? 'gift' : 'warehouse')}}">
-                {{item.roleInActivity === 'admin' ? '主事人' : (item.roleInActivity === 'editor' ? '记账员' : '只读')}}
-              </text>
-              <text class="text-gray" style="font-size:22rpx">{{item.bookName || '全部账本'}}</text>
-            </view>
+    <view class="weui-panel" wx:for="{{members}}" wx:key="userId">
+      <view class="weui-cell">
+        <view class="weui-cell__hd">
+          <image class="avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        </view>
+        <view class="weui-cell__bd">
+          <view class="weui-cell_title">{{item.nickName || '未知用户'}}</view>
+          <view class="weui-cell_desc">
+            <text class="weui-tag {{item.roleInActivity === 'admin' ? 'weui-tag_green' : (item.roleInActivity === 'editor' ? 'weui-tag_orange' : 'weui-tag_default')}}">
+              {{item.roleInActivity === 'admin' ? '主事人' : (item.roleInActivity === 'editor' ? '记账员' : '只读')}}
+            </text>
+            <text class="weui-text_tips">{{item.bookName || '全部账本'}}</text>
           </view>
         </view>
-        <view wx:if="{{isAdmin && item.roleInActivity !== 'admin'}}">
-          <button class="btn-outline" size="mini" bindtap="changeRole" data-id="{{item.userId}}" data-role="{{item.roleInActivity}}">修改角色</button>
-          <button class="btn-danger mt-10" size="mini" bindtap="removeMember" data-id="{{item.userId}}">移除</button>
+        <view class="weui-cell__ft" wx:if="{{isAdmin && item.roleInActivity !== 'admin'}}">
+          <button class="weui-btn weui-btn_default weui-btn_mini" bindtap="changeRole" data-id="{{item.userId}}" data-role="{{item.roleInActivity}}" style="margin-bottom:4px">修改角色</button>
+          <button class="weui-btn weui-btn_warn weui-btn_mini" bindtap="removeMember" data-id="{{item.userId}}">移除</button>
         </view>
       </view>
     </view>
   </block>
 
+  <!-- 空状态 -->
   <block wx:else>
-    <view class="empty-state">
-      <text>暂无成员</text>
+    <view class="weui-empty">
+      <view class="weui-empty__icon">👥</view>
+      <view class="weui-empty__text">暂无成员</view>
     </view>
   </block>
 
   <!-- 邀请按钮 -->
-  <view class="mt-30">
-    <button class="btn-primary" style="width:100%" bindtap="inviteMember">邀请成员</button>
+  <view class="mt-16">
+    <button class="weui-btn weui-btn_primary weui-btn_block" bindtap="inviteMember">邀请成员</button>
   </view>
 
   <!-- 邀请弹窗 -->
-  <view class="modal-mask" wx:if="{{showInvite}}" catchtap="hideInviteDialog">
-    <view class="modal-content text-center" catchtap="stopPropagation">
-      <text class="card-title" style="display:block;margin-bottom:30rpx">邀请成员</text>
-      
-      <view class="form-item text-left">
-        <text class="form-label">角色</text>
-        <picker range="{{roleOptions}}" value="{{inviteRoleIndex}}" bindchange="onInviteRoleChange">
-          <view class="picker">{{roleOptions[inviteRoleIndex]}}</view>
-        </picker>
+  <view class="weui-mask" wx:if="{{showInvite}}" bindtap="hideInviteDialog">
+    <view class="weui-dialog" catchtap="stopPropagation">
+      <view class="weui-dialog__hd">
+        <view class="weui-dialog__title">邀请成员</view>
       </view>
-
-      <view class="form-item text-left" wx:if="{{inviteRoleIndex > 0}}">
-        <text class="form-label">可访问账本</text>
-        <picker range="{{bookOptions}}" value="{{inviteBookIndex}}" bindchange="onInviteBookChange">
-          <view class="picker">{{bookOptions[inviteBookIndex] || '全部账本'}}</view>
-        </picker>
+      <view class="weui-dialog__bd">
+        <view class="weui-form__item">
+          <text class="weui-form__label">角色</text>
+          <picker range="{{roleOptions}}" value="{{inviteRoleIndex}}" bindchange="onInviteRoleChange">
+            <view class="weui-picker">{{roleOptions[inviteRoleIndex]}}</view>
+          </picker>
+        </view>
+        <view wx:if="{{inviteRoleIndex > 0}}" class="weui-form__item">
+          <text class="weui-form__label">可访问账本</text>
+          <picker range="{{bookOptions}}" value="{{inviteBookIndex}}" bindchange="onInviteBookChange">
+            <view class="weui-picker">{{bookOptions[inviteBookIndex] || '全部账本'}}</view>
+          </picker>
+        </view>
+        <view wx:if="{{inviteQR}}" class="text-center mt-16">
+          <image src="{{inviteQR}}" mode="widthFix" style="width:200px;height:200px"></image>
+          <view class="weui-text_desc mt-8">请对方使用微信扫码加入</view>
+        </view>
       </view>
-
-      <view wx:if="{{inviteQR}}" class="mt-20">
-        <image src="{{inviteQR}}" mode="widthFix" style="width:400rpx;height:400rpx"></image>
-        <text class="text-gray mt-10" style="display:block;font-size:24rpx">请对方使用微信扫码加入</text>
+      <view class="weui-dialog__ft">
+        <view wx:if="{{!inviteQR}}" class="weui-dialog__btn" bindtap="hideInviteDialog">取消</view>
+        <view wx:if="{{!inviteQR}}" class="weui-dialog__btn weui-dialog__btn_primary" bindtap="generateInviteQR">生成二维码</view>
+        <view wx:if="{{inviteQR}}" class="weui-dialog__btn weui-dialog__btn_primary" bindtap="hideInviteDialog">关闭</view>
       </view>
-
-      <button wx:if="{{!inviteQR}}" class="btn-primary mt-30" style="width:100%" bindtap="generateInviteQR" loading="{{generating}}">生成邀请二维码</button>
-      <button class="btn-outline mt-20" bindtap="hideInviteDialog">关闭</button>
     </view>
   </view>
 </view>

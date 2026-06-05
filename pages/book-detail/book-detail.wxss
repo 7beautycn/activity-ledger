@@ -1,25 +1,2 @@
 /** pages/book-detail/book-detail.wxss **/
-.filter-bar {
-  padding: 16rpx 0;
-}
-
-.filter-item {
-  background: #fff;
-  border-radius: 8rpx;
-  padding: 10rpx 24rpx;
-  font-size: 26rpx;
-  color: #666;
-}
-
-.record-card {
-  transition: all 0.2s;
-}
-
-.record-type-icon {
-  font-size: 40rpx;
-  font-weight: 700;
-}
-
-.items-row {
-  padding: 10rpx 0 10rpx 50rpx;
-}
+/* 使用全局 WeUI 样式 */

@@ -1,11 +1,7 @@
 /** pages/members/members.wxss **/
-.member-card {
-  transition: all 0.2s;
-}
-
-.member-avatar {
-  width: 80rpx;
-  height: 80rpx;
+.avatar {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: #e0e0e0;
+  background: var(--weui-BG-1);
 }

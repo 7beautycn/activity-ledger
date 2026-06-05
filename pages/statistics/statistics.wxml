@@ -1,20 +1,20 @@
 <!--pages/statistics/statistics.wxml-->
-<view class="container">
-  <view class="card">
-    <text class="card-title">统计概览</text>
-    
-    <view class="flex-row mt-20" style="justify-content:space-around">
+<view class="container page-body">
+  <!-- 统计概览 -->
+  <view class="weui-stat-card">
+    <view class="weui-panel__hd" style="padding-left:0">统计概览</view>
+    <view class="weui-stat-row">
       <view class="text-center">
-        <text class="text-gray" style="font-size:22rpx">总收入</text>
-        <view class="text-green amount-large">{{util.formatMoney(stats.totalIncome)}}</view>
+        <view class="weui-stat-item__label">总收入</view>
+        <view class="weui-stat-item__value weui-text_green">{{util.formatMoney(stats.totalIncome)}}</view>
       </view>
       <view class="text-center">
-        <text class="text-gray" style="font-size:22rpx">总支出</text>
-        <view class="text-red amount-large">{{util.formatMoney(stats.totalExpense)}}</view>
+        <view class="weui-stat-item__label">总支出</view>
+        <view class="weui-stat-item__value weui-text_red">{{util.formatMoney(stats.totalExpense)}}</view>
       </view>
       <view class="text-center">
-        <text class="text-gray" style="font-size:22rpx">结余</text>
-        <view class="amount-large" style="color:{{stats.balance >= 0 ? '#1aad19' : '#ee5a24'}}">
+        <view class="weui-stat-item__label">结余</view>
+        <view class="weui-stat-item__value" style="color:{{stats.balance >= 0 ? 'var(--weui-BRAND)' : 'var(--weui-RED)'}}">
           {{util.formatMoney(stats.balance)}}
         </view>
       </view>
@@ -22,61 +22,75 @@
   </view>
 
   <!-- 支出分类汇总 -->
-  <view class="card mt-20" wx:if="{{stats.categorySummary && stats.categorySummary.length > 0}}">
-    <text class="card-title">支出分类汇总</text>
-    <view class="mt-10" wx:for="{{stats.categorySummary}}" wx:key="category">
-      <view class="flex-between category-bar">
-        <view class="flex-row">
-          <text>{{item.category}}</text>
+  <view wx:if="{{stats.categorySummary && stats.categorySummary.length > 0}}" class="weui-panel">
+    <view class="weui-panel__hd">支出分类汇总</view>
+    <view class="weui-panel__bd">
+      <view wx:for="{{stats.categorySummary}}" wx:key="category">
+        <view style="padding:12px 16px 4px">
+          <view class="flex-between">
+            <text class="weui-text_desc">{{item.category}}</text>
+            <view>
+              <text class="weui-text_red" style="font-weight:500">{{util.formatMoney(item.total)}}</text>
+              <text class="weui-text_tips" style="margin-left:8px">{{item.percent}}%</text>
+            </view>
+          </view>
+          <view style="width:100%;height:4px;background:var(--weui-BG-1);border-radius:2px;margin-top:8px">
+            <view style="height:100%;background:var(--weui-BRAND);border-radius:2px;width:{{item.percent}}%;transition:width 0.5s"></view>
+          </view>
         </view>
-        <view class="flex-row">
-          <text class="text-red text-bold">{{util.formatMoney(item.total)}}</text>
-          <text class="text-gray ml-10" style="font-size:22rpx">{{item.percent}}%</text>
-        </view>
-      </view>
-      <view class="progress-bar mt-10">
-        <view class="progress-fill" style="width:{{item.percent}}%"></view>
       </view>
     </view>
   </view>
 
-  <!-- 物品消耗汇总（总账本） -->
-  <view class="card mt-20" wx:if="{{bookType === 'main' && stats.itemSummary && stats.itemSummary.length > 0}}">
-    <text class="card-title">物品消耗汇总</text>
-    <view class="mt-10">
-      <view class="flex-between item-row" wx:for="{{stats.itemSummary}}" wx:key="name">
-        <text>{{item.name}}</text>
-        <text class="text-blue text-bold">{{item.totalQuantity}} {{item.unit || '个'}}</text>
+  <!-- 物品消耗汇总 -->
+  <view wx:if="{{bookType === 'main' && stats.itemSummary && stats.itemSummary.length > 0}}" class="weui-panel">
+    <view class="weui-panel__hd">物品消耗汇总</view>
+    <view class="weui-panel__bd">
+      <view class="weui-cell" wx:for="{{stats.itemSummary}}" wx:key="name">
+        <view class="weui-cell__bd">
+          <view class="weui-cell_title">{{item.name}}</view>
+        </view>
+        <view class="weui-cell__ft">
+          <text class="weui-text_blue" style="font-weight:500">{{item.totalQuantity}} {{item.unit || '个'}}</text>
+        </view>
       </view>
     </view>
   </view>
 
   <!-- 收礼账本统计 -->
   <block wx:if="{{bookType === 'gift'}}">
-    <view class="card mt-20">
-      <text class="card-title">礼金统计</text>
-      <view class="mt-10">
-        <view class="flex-between mb-10">
-          <text>礼金总额</text>
-          <text class="text-green text-bold">{{util.formatMoney(stats.giftTotal)}}</text>
+    <view class="weui-panel">
+      <view class="weui-panel__hd">礼金统计</view>
+      <view class="weui-panel__bd">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">礼金总额</view>
+          <view class="weui-cell__ft">
+            <text class="weui-text_green" style="font-weight:500">{{util.formatMoney(stats.giftTotal)}}</text>
+          </view>
         </view>
-        <view class="flex-between mb-10">
-          <text>已结转出</text>
-          <text class="text-red text-bold">{{util.formatMoney(stats.settledCash)}}</text>
+        <view class="weui-cell">
+          <view class="weui-cell__bd">已结转出</view>
+          <view class="weui-cell__ft">
+            <text class="weui-text_red" style="font-weight:500">{{util.formatMoney(stats.settledCash)}}</text>
+          </view>
         </view>
-        <view class="flex-between">
-          <text>未结现金</text>
-          <text class="text-orange text-bold">{{util.formatMoney(stats.unsettledCash)}}</text>
+        <view class="weui-cell">
+          <view class="weui-cell__bd">未结现金</view>
+          <view class="weui-cell__ft">
+            <text class="weui-text_orange" style="font-weight:500">{{util.formatMoney(stats.unsettledCash)}}</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <view class="card mt-20" wx:if="{{stats.giftSummary && stats.giftSummary.length > 0}}">
-      <text class="card-title">礼品汇总</text>
-      <view class="mt-10">
-        <view class="flex-between item-row" wx:for="{{stats.giftSummary}}" wx:key="name">
-          <text>{{item.name}}</text>
-          <text class="text-blue text-bold">x{{item.totalQuantity}}</text>
+    <view wx:if="{{stats.giftSummary && stats.giftSummary.length > 0}}" class="weui-panel">
+      <view class="weui-panel__hd">礼品汇总</view>
+      <view class="weui-panel__bd">
+        <view class="weui-cell" wx:for="{{stats.giftSummary}}" wx:key="name">
+          <view class="weui-cell__bd">{{item.name}}</view>
+          <view class="weui-cell__ft">
+            <text class="weui-text_blue" style="font-weight:500">x{{item.totalQuantity}}</text>
+          </view>
         </view>
       </view>
     </view>
@@ -84,25 +98,29 @@
 
   <!-- 仓库账本统计 -->
   <block wx:if="{{bookType === 'warehouse'}}">
-    <view class="card mt-20">
-      <text class="card-title">库存明细</text>
-      <view wx:if="{{stats.inventory && stats.inventory.length > 0}}" class="mt-10">
-        <view class="inventory-row flex-between" wx:for="{{stats.inventory}}" wx:key="name">
-          <view>
-            <text class="text-bold">{{item.name}}</text>
-            <text class="text-gray ml-10" style="font-size:22rpx">{{item.unit || '个'}}</text>
+    <view class="weui-panel">
+      <view class="weui-panel__hd">库存明细</view>
+      <view class="weui-panel__bd">
+        <block wx:if="{{stats.inventory && stats.inventory.length > 0}}">
+          <view class="weui-cell" wx:for="{{stats.inventory}}" wx:key="name">
+            <view class="weui-cell__bd">
+              <view class="weui-cell_title">{{item.name}}</view>
+              <view class="weui-cell_desc">{{item.unit || '个'}}</view>
+            </view>
+            <view class="weui-cell__ft">
+              <text style="font-weight:600;color:{{item.stock > 0 ? 'var(--weui-BRAND)' : 'var(--weui-RED)'}}">{{item.stock}}</text>
+            </view>
           </view>
-          <text class="text-bold" style="color:{{item.stock > 0 ? '#1aad19' : '#ee5a24'}}">
-            {{item.stock}}
-          </text>
+        </block>
+        <view wx:else style="padding:40px 0;text-align:center">
+          <text class="weui-text_desc">暂无库存</text>
         </view>
       </view>
-      <view wx:else class="text-center text-gray mt-20">暂无库存</view>
     </view>
   </block>
 
   <!-- 导出按钮 -->
-  <view class="mt-30 mb-30" wx:if="{{bookType === 'main'}}">
-    <button class="btn-outline" style="width:100%" bindtap="exportCSV">导出为 CSV</button>
+  <view class="mt-24" wx:if="{{bookType === 'main'}}">
+    <button class="weui-btn weui-btn_default weui-btn_block" bindtap="exportCSV">导出为 CSV</button>
   </view>
 </view>

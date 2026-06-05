@@ -1,107 +1,116 @@
 <!--pages/index/index.wxml-->
 <view class="container">
   <!-- 用户信息头部 -->
-  <view class="user-header card">
-    <view class="flex-row">
-      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
-      <view class="user-info ml-10">
-        <text class="text-bold">{{userInfo.nickName || '未登录'}}</text>
-        <text class="text-gray" style="font-size:24rpx">{{userInfo.role || ''}}</text>
+  <view class="weui-panel">
+    <view class="weui-cell">
+      <view class="weui-cell__hd">
+        <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      </view>
+      <view class="weui-cell__bd">
+        <view class="weui-cell_title">{{userInfo.nickName || '未登录'}}</view>
+        <view class="weui-cell_desc">{{userInfo.role || ''}}</view>
       </view>
     </view>
   </view>
 
   <!-- Tab切换 -->
-  <view class="tab-bar">
-    <view class="tab-item {{activeTab === 'active' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="active">
-      <text>进行中</text>
+  <view class="weui-panel" style="padding:0">
+    <view style="display:flex">
+      <view class="tab-item {{activeTab === 'active' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="active">
+        <text>进行中</text>
+      </view>
+      <view class="tab-item {{activeTab === 'archived' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="archived">
+        <text>已归档</text>
+      </view>
     </view>
-    <view class="tab-item {{activeTab === 'archived' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="archived">
-      <text>已归档</text>
-    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="weui-loadmore">
+    <text class="weui-loadmore__tips">加载中...</text>
   </view>
 
   <!-- 活动列表 -->
-  <view wx:if="{{loading}}">
-    <view class="empty-state">
-      <text>加载中...</text>
-    </view>
-  </view>
-
   <block wx:elif="{{activities.length > 0}}">
-    <view class="activity-card card" wx:for="{{activities}}" wx:key="_id" bindtap="goToActivity" data-id="{{item._id}}">
-      <view class="flex-between">
-        <view>
-          <text class="card-title">{{item.name}}</text>
-          <view class="flex-row mt-10">
-            <text class="tag tag-{{item.status}}">{{item.status === 'active' ? '进行中' : '已归档'}}</text>
-            <text class="text-gray" style="font-size:24rpx">{{item.startDate}} ~ {{item.endDate}}</text>
+    <view class="weui-panel" wx:for="{{activities}}" wx:key="_id">
+      <view class="weui-cell weui-cell_access" bindtap="goToActivity" data-id="{{item._id}}">
+        <view class="weui-cell__bd">
+          <view class="weui-cell_title">{{item.name}}</view>
+          <view class="weui-cell_desc" style="margin-top:6px">
+            <text class="weui-tag {{item.status === 'active' ? 'weui-tag_green' : 'weui-tag_default'}}" style="margin-right:8px">{{item.status === 'active' ? '进行中' : '已归档'}}</text>
+            <text>{{item.startDate}} ~ {{item.endDate}}</text>
           </view>
         </view>
-        <text class="text-gray">{{item.location || ''}}</text>
+        <view class="weui-cell__ft">
+          <text class="weui-text_desc">{{item.location || ''}}</text>
+        </view>
       </view>
-      <view class="flex-row mt-20" style="justify-content:space-around">
+      <view class="weui-stat-row">
         <view class="text-center">
-          <text class="text-gray">账本</text>
-          <view class="mt-10 text-bold">{{item.bookCount || 0}}个</view>
+          <view class="weui-stat-item__label">账本</view>
+          <view class="weui-stat-item__value weui-text_green">{{item.bookCount || 0}}</view>
         </view>
         <view class="text-center">
-          <text class="text-gray">成员</text>
-          <view class="mt-10 text-bold">{{item.memberCount || 0}}人</view>
+          <view class="weui-stat-item__label">成员</view>
+          <view class="weui-stat-item__value" style="color:var(--weui-BLUE)">{{item.memberCount || 0}}</view>
         </view>
       </view>
     </view>
   </block>
 
+  <!-- 空状态 -->
   <block wx:else>
-    <view class="empty-state">
-      <text>暂无活动</text>
-      <text class="mt-10 text-gray" style="font-size:24rpx">点击下方按钮创建活动</text>
+    <view class="weui-empty">
+      <view class="weui-empty__icon">📋</view>
+      <view class="weui-empty__text">暂无活动</view>
+      <view class="weui-empty__text" style="margin-top:4px">点击下方按钮创建活动</view>
     </view>
   </block>
 
   <!-- 底部创建按钮 -->
-  <view class="fixed-bottom">
-    <button class="btn-primary" style="width:100%" bindtap="showCreateDialog">+ 创建活动</button>
+  <view class="weui-bottom-bar">
+    <button class="weui-btn weui-btn_primary weui-btn_block" bindtap="showCreateDialog">+ 创建活动</button>
   </view>
 </view>
 
 <!-- 创建活动弹窗 -->
-<view class="modal-mask" wx:if="{{showCreate}}" catchtap="hideCreateDialog">
-  <view class="modal-content" catchtap="stopPropagation">
-    <text class="card-title" style="display:block;text-align:center;margin-bottom:30rpx">创建新活动</text>
-    
-    <view class="form-item">
-      <text class="form-label">活动名称 *</text>
-      <input class="form-input" placeholder="如：2026清明公祭" value="{{newActivity.name}}" bindinput="onActivityNameInput" />
+<view class="weui-mask" wx:if="{{showCreate}}" bindtap="hideCreateDialog">
+  <view class="weui-dialog" catchtap="stopPropagation">
+    <view class="weui-dialog__hd">
+      <view class="weui-dialog__title">创建新活动</view>
     </view>
-    
-    <view class="form-item">
-      <text class="form-label">开始日期 *</text>
-      <picker mode="date" value="{{newActivity.startDate}}" bindchange="onStartDateChange">
-        <view class="picker {{newActivity.startDate ? '' : 'picker-placeholder'}}">
-          {{newActivity.startDate || '请选择开始日期'}}
-        </view>
-      </picker>
-    </view>
+    <view class="weui-dialog__bd">
+      <view class="weui-form__item">
+        <text class="weui-form__label">活动名称 *</text>
+        <input class="weui-input" placeholder="如：2026清明公祭" value="{{newActivity.name}}" bindinput="onActivityNameInput" />
+      </view>
+      
+      <view class="weui-form__item">
+        <text class="weui-form__label">开始日期 *</text>
+        <picker mode="date" value="{{newActivity.startDate}}" bindchange="onStartDateChange">
+          <view class="weui-picker {{newActivity.startDate ? '' : 'weui-picker_placeholder'}}">
+            {{newActivity.startDate || '请选择开始日期'}}
+          </view>
+        </picker>
+      </view>
 
-    <view class="form-item">
-      <text class="form-label">结束日期</text>
-      <picker mode="date" value="{{newActivity.endDate}}" bindchange="onEndDateChange">
-        <view class="picker {{newActivity.endDate ? '' : 'picker-placeholder'}}">
-          {{newActivity.endDate || '请选择结束日期'}}
-        </view>
-      </picker>
-    </view>
+      <view class="weui-form__item">
+        <text class="weui-form__label">结束日期</text>
+        <picker mode="date" value="{{newActivity.endDate}}" bindchange="onEndDateChange">
+          <view class="weui-picker {{newActivity.endDate ? '' : 'weui-picker_placeholder'}}">
+            {{newActivity.endDate || '请选择结束日期'}}
+          </view>
+        </picker>
+      </view>
 
-    <view class="form-item">
-      <text class="form-label">活动地点</text>
-      <input class="form-input" placeholder="如：祠堂" value="{{newActivity.location}}" bindinput="onLocationInput" />
+      <view class="weui-form__item">
+        <text class="weui-form__label">活动地点</text>
+        <input class="weui-input" placeholder="如：祠堂" value="{{newActivity.location}}" bindinput="onLocationInput" />
+      </view>
     </view>
-
-    <view class="flex-row mt-30" style="justify-content:space-around">
-      <button class="btn-outline" bindtap="hideCreateDialog">取消</button>
-      <button class="btn-primary" bindtap="createActivity" loading="{{creating}}">确认创建</button>
+    <view class="weui-dialog__ft">
+      <view class="weui-dialog__btn" bindtap="hideCreateDialog">取消</view>
+      <view class="weui-dialog__btn weui-dialog__btn_primary" bindtap="createActivity">确认创建</view>
     </view>
   </view>
 </view>

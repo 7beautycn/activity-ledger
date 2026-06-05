@@ -1,43 +1,37 @@
 /** pages/index/index.wxss **/
-.user-header {
-  margin-bottom: 10rpx;
-}
-
 .avatar {
-  width: 80rpx;
-  height: 80rpx;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: #e0e0e0;
-}
-
-.tab-bar {
-  display: flex;
-  background: #fff;
-  border-radius: 16rpx;
-  margin-bottom: 20rpx;
-  overflow: hidden;
+  background: var(--weui-BG-1);
 }
 
 .tab-item {
   flex: 1;
   text-align: center;
-  padding: 20rpx 0;
-  font-size: 28rpx;
-  color: #666;
-  border-bottom: 4rpx solid transparent;
-  transition: all 0.3s;
+  padding: 14px 0;
+  font-size: 15px;
+  color: var(--weui-FG-1);
+  position: relative;
+}
+
+.tab-item::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background: transparent;
 }
 
 .tab-active {
-  color: #1aad19;
-  border-bottom-color: #1aad19;
-  font-weight: 600;
+  color: var(--weui-BRAND);
+  font-weight: 500;
 }
 
-.activity-card {
-  transition: all 0.2s;
-}
-
-.activity-card:active {
-  background: #f9f9f9;
+.tab-active::after {
+  background: var(--weui-BRAND);
 }

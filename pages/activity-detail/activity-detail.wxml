@@ -1,117 +1,130 @@
 <!--pages/activity-detail/activity-detail.wxml-->
 <view class="container">
   <!-- 活动信息 -->
-  <view class="card">
-    <view class="flex-between">
-      <view>
-        <text class="card-title">{{activity.name}}</text>
-        <view class="flex-row mt-10">
-          <text class="tag tag-{{activity.status}}">{{activity.status === 'active' ? '进行中' : '已归档'}}</text>
-          <text class="text-gray" style="font-size:24rpx">{{activity.startDate}} ~ {{activity.endDate}}</text>
+  <view class="weui-panel">
+    <view class="weui-cell">
+      <view class="weui-cell__bd">
+        <view class="weui-cell_title">{{activity.name}}</view>
+        <view class="weui-cell_desc" style="margin-top:6px">
+          <text class="weui-tag {{activity.status === 'active' ? 'weui-tag_green' : 'weui-tag_default'}}" style="margin-right:8px">{{activity.status === 'active' ? '进行中' : '已归档'}}</text>
+          <text>{{activity.startDate}} ~ {{activity.endDate}}</text>
         </view>
       </view>
-      <view wx:if="{{isAdmin && activity.status === 'active'}}">
-        <button class="btn-outline" size="mini" bindtap="archiveActivity">归档</button>
+      <view class="weui-cell__ft" wx:if="{{isAdmin && activity.status === 'active'}}">
+        <button class="weui-btn weui-btn_warn weui-btn_mini" bindtap="archiveActivity">归档</button>
       </view>
     </view>
-    <text class="text-gray mt-10" style="font-size:24rpx">{{activity.location || '未设置地点'}}</text>
+    <view class="weui-cell" wx:if="{{activity.location}}">
+      <view class="weui-cell__bd">
+        <view class="weui-text_desc">{{activity.location}}</view>
+      </view>
+    </view>
   </view>
 
   <!-- 账本列表 -->
-  <view class="section-title mt-20">账本列表</view>
-  
-  <view wx:if="{{loading}}">
-    <view class="empty-state"><text>加载中...</text></view>
-  </view>
+  <view class="weui-panel">
+    <view class="weui-panel__hd">账本列表</view>
+    <view class="weui-panel__bd">
+      <view wx:if="{{loading}}" class="weui-loadmore">
+        <text class="weui-loadmore__tips">加载中...</text>
+      </view>
 
-  <block wx:elif="{{books.length > 0}}">
-    <view class="book-card card" wx:for="{{books}}" wx:key="_id" bindtap="goToBook" data-id="{{item._id}}" data-type="{{item.type}}">
-      <view class="flex-between">
-        <view class="flex-row">
-          <text class="book-icon">{{item.icon}}</text>
-          <view class="ml-10">
-            <text class="text-bold">{{item.name}}</text>
-            <view class="flex-row mt-10">
-              <text class="tag {{item.tagClass}}">{{item.typeLabel}}</text>
+      <block wx:elif="{{books.length > 0}}">
+        <view class="weui-cell weui-cell_access" wx:for="{{books}}" wx:key="_id" bindtap="goToBook" data-id="{{item._id}}" data-type="{{item.type}}">
+          <view class="weui-cell__hd">
+            <text style="font-size:28px">{{item.icon}}</text>
+          </view>
+          <view class="weui-cell__bd">
+            <view class="weui-cell_title">{{item.name}}</view>
+            <view class="weui-cell_desc">
+              <text class="weui-tag {{item.tagClass}}">{{item.typeLabel}}</text>
             </view>
           </view>
+          <view class="weui-cell__ft">
+            <text class="weui-text_tips">负责人: {{item.ownerName || '未知'}}</text>
+          </view>
         </view>
-        <view class="text-right">
-          <text class="text-gray" style="font-size:22rpx">负责人</text>
-          <view><text style="font-size:24rpx">{{item.ownerName || '未知'}}</text></view>
-        </view>
+      </block>
+
+      <view wx:else class="weui-empty" style="padding:40px 0">
+        <view class="weui-empty__text">暂无账本</view>
       </view>
     </view>
-  </block>
-
-  <block wx:else>
-    <view class="empty-state">
-      <text>暂无账本</text>
-    </view>
-  </block>
-
-  <!-- 成员入口 -->
-  <view class="section-title mt-20" wx:if="{{isAdmin}}">成员管理</view>
-  <view class="card flex-between" wx:if="{{isAdmin}}" bindtap="goToMembers">
-    <text>活动成员 ({{memberCount}}人)</text>
-    <text style="color:#1aad19">管理 ></text>
   </view>
 
-  <!-- 主事人操作按钮 -->
-  <view class="mt-30" wx:if="{{isAdmin && activity.status === 'active'}}">
-    <button class="btn-primary mb-20" style="width:100%" bindtap="showCreateBookDialog">+ 创建子账本</button>
-    <button class="btn-outline" style="width:100%" bindtap="goToMembers">邀请成员</button>
-  </view>
-
-  <!-- 设置收款码 -->
-  <view class="section-title mt-20" wx:if="{{isAdmin}}">活动设置</view>
-  <view class="card" wx:if="{{isAdmin}}">
-    <view class="form-item">
-      <text class="form-label">微信收款码</text>
-      <view class="flex-row">
-        <image wx:if="{{activity.settings && activity.settings.wxPayQR}}" src="{{activity.settings.wxPayQR}}" mode="aspectFill" style="width:120rpx;height:120rpx;border-radius:8rpx" bindtap="previewImage" data-src="{{activity.settings.wxPayQR}}"></image>
-        <button wx:else class="btn-outline" size="mini" bindtap="uploadQR" data-type="wxPayQR">上传</button>
+  <!-- 成员管理 -->
+  <view wx:if="{{isAdmin}}" class="weui-panel">
+    <view class="weui-cell weui-cell_access" bindtap="goToMembers">
+      <view class="weui-cell__bd">
+        <view class="weui-cell_title">活动成员 ({{memberCount}}人)</view>
       </view>
+      <view class="weui-cell__ft">管理</view>
     </view>
-    <view class="form-item">
-      <text class="form-label">支付宝收款码</text>
-      <view class="flex-row">
-        <image wx:if="{{activity.settings && activity.settings.alipayQR}}" src="{{activity.settings.alipayQR}}" mode="aspectFill" style="width:120rpx;height:120rpx;border-radius:8rpx" bindtap="previewImage" data-src="{{activity.settings.alipayQR}}"></image>
-        <button wx:else class="btn-outline" size="mini" bindtap="uploadQR" data-type="alipayQR">上传</button>
+  </view>
+
+  <!-- 主事人操作 -->
+  <view class="mt-16" wx:if="{{isAdmin && activity.status === 'active'}}">
+    <view class="weui-btn-group">
+      <button class="weui-btn weui-btn_primary" bindtap="showCreateBookDialog">创建子账本</button>
+      <button class="weui-btn weui-btn_plain-primary" bindtap="goToMembers">邀请成员</button>
+    </view>
+  </view>
+
+  <!-- 收款码设置 -->
+  <view wx:if="{{isAdmin}}" class="weui-panel mt-16">
+    <view class="weui-panel__hd">活动设置</view>
+    <view class="weui-panel__bd">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">
+          <view class="weui-cell_title">微信收款码</view>
+        </view>
+        <view class="weui-cell__ft">
+          <image wx:if="{{activity.settings && activity.settings.wxPayQR}}" src="{{activity.settings.wxPayQR}}" mode="aspectFill" style="width:60px;height:60px;border-radius:4px" bindtap="previewImage" data-src="{{activity.settings.wxPayQR}}"></image>
+          <button wx:else class="weui-btn weui-btn_default weui-btn_mini" bindtap="uploadQR" data-type="wxPayQR">上传</button>
+        </view>
+      </view>
+      <view class="weui-cell">
+        <view class="weui-cell__bd">
+          <view class="weui-cell_title">支付宝收款码</view>
+        </view>
+        <view class="weui-cell__ft">
+          <image wx:if="{{activity.settings && activity.settings.alipayQR}}" src="{{activity.settings.alipayQR}}" mode="aspectFill" style="width:60px;height:60px;border-radius:4px" bindtap="previewImage" data-src="{{activity.settings.alipayQR}}"></image>
+          <button wx:else class="weui-btn weui-btn_default weui-btn_mini" bindtap="uploadQR" data-type="alipayQR">上传</button>
+        </view>
       </view>
     </view>
   </view>
 </view>
 
 <!-- 创建子账本弹窗 -->
-<view class="modal-mask" wx:if="{{showCreateBook}}" catchtap="hideCreateBookDialog">
-  <view class="modal-content" catchtap="stopPropagation">
-    <text class="card-title" style="display:block;text-align:center;margin-bottom:30rpx">创建子账本</text>
-    
-    <view class="form-item">
-      <text class="form-label">账本类型 *</text>
-      <picker range="{{bookTypeOptions}}" value="{{newBookTypeIndex}}" bindchange="onBookTypeChange">
-        <view class="picker">{{bookTypeOptions[newBookTypeIndex] || '请选择账本类型'}}</view>
-      </picker>
+<view class="weui-mask" wx:if="{{showCreateBook}}" bindtap="hideCreateBookDialog">
+  <view class="weui-dialog" catchtap="stopPropagation">
+    <view class="weui-dialog__hd">
+      <view class="weui-dialog__title">创建子账本</view>
     </view>
-
-    <view class="form-item">
-      <text class="form-label">账本名称</text>
-      <input class="form-input" placeholder="如：收礼记录本" value="{{newBookName}}" bindinput="onBookNameInput" />
+    <view class="weui-dialog__bd">
+      <view class="weui-form__item">
+        <text class="weui-form__label">账本类型 *</text>
+        <picker range="{{bookTypeOptions}}" value="{{newBookTypeIndex}}" bindchange="onBookTypeChange">
+          <view class="weui-picker">{{bookTypeOptions[newBookTypeIndex] || '请选择账本类型'}}</view>
+        </picker>
+      </view>
+      <view class="weui-form__item">
+        <text class="weui-form__label">账本名称</text>
+        <input class="weui-input" placeholder="如：收礼记录本" value="{{newBookName}}" bindinput="onBookNameInput" />
+      </view>
+      <view class="weui-form__item">
+        <text class="weui-form__label">负责人 *</text>
+        <picker range="{{memberNames}}" value="{{selectedMemberIndex}}" bindchange="onMemberChange">
+          <view class="weui-picker {{selectedMemberIndex >= 0 ? '' : 'weui-picker_placeholder'}}">
+            {{selectedMemberIndex >= 0 ? memberNames[selectedMemberIndex] : '请选择负责人'}}
+          </view>
+        </picker>
+      </view>
     </view>
-
-    <view class="form-item">
-      <text class="form-label">负责人 *</text>
-      <picker range="{{memberNames}}" value="{{selectedMemberIndex}}" bindchange="onMemberChange">
-        <view class="picker {{selectedMemberIndex >= 0 ? '' : 'picker-placeholder'}}">
-          {{selectedMemberIndex >= 0 ? memberNames[selectedMemberIndex] : '请选择负责人'}}
-        </view>
-      </picker>
-    </view>
-
-    <view class="flex-row mt-30" style="justify-content:space-around">
-      <button class="btn-outline" bindtap="hideCreateBookDialog">取消</button>
-      <button class="btn-primary" bindtap="createSubBook" loading="{{creating}}">确认创建</button>
+    <view class="weui-dialog__ft">
+      <view class="weui-dialog__btn" bindtap="hideCreateBookDialog">取消</view>
+      <view class="weui-dialog__btn weui-dialog__btn_primary" bindtap="createSubBook">确认创建</view>
     </view>
   </view>
 </view>

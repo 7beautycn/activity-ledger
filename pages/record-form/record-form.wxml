@@ -1,208 +1,256 @@
 <!--pages/record-form/record-form.wxml-->
-<view class="container">
-  <view class="card">
-    <text class="card-title">{{pageTitle}}</text>
+<view class="container page-body">
+  <view class="weui-panel">
+    <view class="weui-panel__hd">{{pageTitle}}</view>
   </view>
 
-  <view class="card mt-20">
-    <!-- ===== 收礼账本 - 登记收礼 ===== -->
-    <block wx:if="{{bookType === 'gift' && recordType === 'gift'}}">
-      <view class="form-item">
-        <text class="form-label">姓名 *</text>
-        <input class="form-input" placeholder="送礼人姓名" value="{{form.person}}" bindinput="onFieldInput" data-field="person" />
-      </view>
-
-      <view class="form-item">
-        <text class="form-label">金额 *</text>
-        <input class="form-input" type="digit" placeholder="0" value="{{form.amount}}" bindinput="onFieldInput" data-field="amount" />
-      </view>
-
-      <view class="form-item">
-        <text class="form-label">收款方式 *</text>
-        <picker range="{{paymentMethods}}" value="{{paymentMethodIndex}}" bindchange="onPaymentMethodChange">
-          <view class="picker">{{paymentMethods[paymentMethodIndex]}}</view>
-        </picker>
-      </view>
-
-      <!-- 收款码展示 -->
-      <view wx:if="{{paymentMethodIndex > 0 && qrCodeUrl}}" class="mt-10 mb-20">
-        <button class="btn-outline" size="mini" bindtap="showQRCode">查看收款码</button>
-      </view>
-
-      <view class="form-item">
-        <view class="flex-between">
-          <text class="form-label">是否有礼品</text>
-          <switch checked="{{form.hasGift}}" bindchange="onHasGiftChange" color="#1aad19" />
-        </view>
-      </view>
-
-      <!-- 礼品列表 -->
-      <block wx:if="{{form.hasGift}}">
-        <view wx:for="{{form.gifts}}" wx:key="index" class="gift-item">
-          <view class="flex-between mb-10">
-            <text class="text-bold">礼品 {{index + 1}}</text>
-            <text class="text-red" bindtap="removeGift" data-index="{{index}}" style="font-size:22rpx">删除</text>
-          </view>
-          <input class="form-input mb-10" placeholder="礼品名称" value="{{item.name}}" bindinput="onGiftFieldInput" data-index="{{index}}" data-field="name" />
-          <input class="form-input" type="number" placeholder="数量" value="{{item.quantity}}" bindinput="onGiftFieldInput" data-index="{{index}}" data-field="quantity" />
-        </view>
-        <button class="btn-outline mt-10" style="width:100%" bindtap="addGift">+ 添加礼品</button>
-      </block>
-
-      <view class="form-item mt-20">
-        <text class="form-label">备注</text>
-        <textarea class="form-textarea" placeholder="可选" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" />
-      </view>
-
-      <view class="form-item">
-        <text class="form-label">时间</text>
-        <picker mode="date" value="{{formDate}}" bindchange="onDateChange">
-          <view class="picker">{{form.createdAt || '请选择日期'}}</view>
-        </picker>
-      </view>
-    </block>
-
-    <!-- ===== 总账本 - 记收入 ===== -->
-    <block wx:elif="{{bookType === 'main' && recordType === 'income'}}">
-      <view class="form-item">
-        <text class="form-label">金额 *</text>
-        <input class="form-input" type="digit" placeholder="0.00" value="{{form.amount}}" bindinput="onFieldInput" data-field="amount" />
-      </view>
-
-      <view class="form-item">
-        <text class="form-label">收入类型 *</text>
-        <picker range="{{incomeTypes}}" value="{{incomeTypeIndex}}" bindchange="onIncomeTypeChange">
-          <view class="picker">{{incomeTypes[incomeTypeIndex]}}</view>
-        </picker>
-      </view>
-
-      <view wx:if="{{incomeTypeIndex === 1}}" class="form-item">
-        <text class="form-label">来源子账本</text>
-        <picker range="{{subBookNames}}" value="{{subBookIndex}}" bindchange="onSubBookChange">
-          <view class="picker {{subBookNames.length > 0 ? '' : 'picker-placeholder'}}">
-            {{subBookNames.length > 0 ? subBookNames[subBookIndex] : '暂无子账本'}}
-          </view>
-        </picker>
-      </view>
-
-      <view class="form-item">
-        <text class="form-label">备注</text>
-        <textarea class="form-textarea" placeholder="可选" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" />
-      </view>
-
-      <view class="form-item">
-        <text class="form-label">附件图片</text>
-        <view class="flex-wrap">
-          <block wx:for="{{form.attachments}}" wx:key="*this">
-            <image src="{{item}}" mode="aspectFill" class="attach-img" bindtap="previewAttach" data-src="{{item}}"></image>
-          </block>
-          <view class="add-img-btn" bindtap="uploadAttach" wx:if="{{form.attachments.length < 9}}">
-            <text>+</text>
+  <view class="weui-panel">
+    <view class="weui-panel__bd">
+      <!-- ===== 收礼账本 - 登记收礼 ===== -->
+      <block wx:if="{{bookType === 'gift' && recordType === 'gift'}}">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <input class="weui-input" placeholder="送礼人姓名 *" value="{{form.person}}" bindinput="onFieldInput" data-field="person" />
           </view>
         </view>
-      </view>
-    </block>
-
-    <!-- ===== 总账本 - 记支出 ===== -->
-    <block wx:elif="{{bookType === 'main' && recordType === 'expense'}}">
-      <view class="form-item">
-        <text class="form-label">金额 *</text>
-        <input class="form-input" type="digit" placeholder="0.00" value="{{form.amount}}" bindinput="onFieldInput" data-field="amount" />
-      </view>
-
-      <view class="form-item">
-        <text class="form-label">支出分类 *</text>
-        <picker range="{{expenseCategories}}" value="{{expenseCategoryIndex}}" bindchange="onExpenseCategoryChange">
-          <view class="picker">{{expenseCategories[expenseCategoryIndex]}}</view>
-        </picker>
-      </view>
-
-      <view class="form-item">
-        <view class="flex-between">
-          <text class="form-label">物品明细</text>
-          <text class="text-green" style="font-size:24rpx" bindtap="addExpenseItem">+ 添加</text>
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <input class="weui-input" type="digit" placeholder="金额 *" value="{{form.amount}}" bindinput="onFieldInput" data-field="amount" />
+          </view>
         </view>
-        <block wx:for="{{form.items}}" wx:key="index">
-          <view class="expense-item">
-            <view class="flex-between mb-10">
-              <text>物品 {{index + 1}}</text>
-              <text class="text-red" bindtap="removeExpenseItem" data-index="{{index}}" style="font-size:22rpx">删除</text>
+        <view class="weui-cell weui-cell_access">
+          <view class="weui-cell__bd">
+            <view class="weui-cell_title">收款方式</view>
+          </view>
+          <view class="weui-cell__ft">
+            <picker range="{{paymentMethods}}" value="{{paymentMethodIndex}}" bindchange="onPaymentMethodChange">
+              {{paymentMethods[paymentMethodIndex]}}
+            </picker>
+          </view>
+        </view>
+
+        <!-- 收款码 -->
+        <view wx:if="{{paymentMethodIndex > 0 && qrCodeUrl}}" class="weui-cell">
+          <view class="weui-cell__bd"></view>
+          <view class="weui-cell__ft">
+            <button class="weui-btn weui-btn_default weui-btn_mini" bindtap="showQRCode">查看收款码</button>
+          </view>
+        </view>
+
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <view class="weui-cell_title">是否有礼品</view>
+          </view>
+          <view class="weui-cell__ft">
+            <switch checked="{{form.hasGift}}" bindchange="onHasGiftChange" color="var(--weui-BRAND)" />
+          </view>
+        </view>
+
+        <!-- 礼品列表 -->
+        <block wx:if="{{form.hasGift}}">
+          <view wx:for="{{form.gifts}}" wx:key="index" style="background:var(--weui-BG-1);margin:8px 16px;padding:16px;border-radius:8px">
+            <view class="flex-between" style="margin-bottom:8px">
+              <text class="weui-text_desc">礼品 {{index + 1}}</text>
+              <text class="weui-text_red" bindtap="removeGift" data-index="{{index}}" style="font-size:12px">删除</text>
             </view>
-            <view class="flex-row" style="gap:10rpx">
-              <input class="form-input" style="flex:2" placeholder="名称" value="{{item.name}}" bindinput="onExpenseItemInput" data-index="{{index}}" data-field="name" />
-              <input class="form-input" style="flex:1" type="number" placeholder="数量" value="{{item.quantity}}" bindinput="onExpenseItemInput" data-index="{{index}}" data-field="quantity" />
-              <input class="form-input" style="flex:1" type="digit" placeholder="单价" value="{{item.price}}" bindinput="onExpenseItemInput" data-index="{{index}}" data-field="price" />
+            <input class="weui-input" placeholder="礼品名称" value="{{item.name}}" bindinput="onGiftFieldInput" data-index="{{index}}" data-field="name" style="margin-bottom:8px" />
+            <input class="weui-input" type="number" placeholder="数量" value="{{item.quantity}}" bindinput="onGiftFieldInput" data-index="{{index}}" data-field="quantity" />
+          </view>
+          <view class="weui-cell">
+            <view class="weui-cell__bd" style="text-align:center">
+              <text class="weui-text_link" bindtap="addGift">+ 添加礼品</text>
             </view>
           </view>
         </block>
-      </view>
 
-      <view class="form-item">
-        <text class="form-label">备注</text>
-        <textarea class="form-textarea" placeholder="可选" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" />
-      </view>
-    </block>
-
-    <!-- ===== 仓库账本 - 入库/出库 ===== -->
-    <block wx:elif="{{bookType === 'warehouse'}}">
-      <view class="form-item">
-        <text class="form-label">物品名称 *</text>
-        <input class="form-input" placeholder="输入物品名称" value="{{form.itemName}}" bindinput="onFieldInput" data-field="itemName" />
-      </view>
-
-      <view class="form-item">
-        <text class="form-label">数量 *</text>
-        <input class="form-input" type="number" placeholder="0" value="{{form.quantity}}" bindinput="onFieldInput" data-field="quantity" />
-      </view>
-
-      <view class="form-item">
-        <text class="form-label">单位</text>
-        <picker range="{{units}}" value="{{unitIndex}}" bindchange="onUnitChange">
-          <view class="picker">{{units[unitIndex]}}</view>
-        </picker>
-      </view>
-
-      <block wx:if="{{recordType === 'stockin'}}">
-        <view class="form-item">
-          <text class="form-label">单价（可选）</text>
-          <input class="form-input" type="digit" placeholder="0.00" value="{{form.price}}" bindinput="onFieldInput" data-field="price" />
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <textarea class="weui-textarea" placeholder="备注（可选）" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" style="min-height:60px" />
+          </view>
         </view>
-        <view class="form-item">
-          <text class="form-label">来源</text>
-          <picker range="{{sourceTypes}}" value="{{sourceIndex}}" bindchange="onSourceChange">
-            <view class="picker">{{sourceTypes[sourceIndex]}}</view>
-          </picker>
+        <view class="weui-cell weui-cell_access">
+          <view class="weui-cell__bd">
+            <view class="weui-cell_title">时间</view>
+          </view>
+          <view class="weui-cell__ft">
+            <picker mode="date" value="{{formDate}}" bindchange="onDateChange">
+              {{form.createdAt || '请选择日期'}}
+            </picker>
+          </view>
         </view>
       </block>
 
-      <block wx:if="{{recordType === 'stockout'}}">
-        <view class="form-item">
-          <text class="form-label">用途</text>
-          <input class="form-input" placeholder="用途说明" value="{{form.purpose}}" bindinput="onFieldInput" data-field="purpose" />
+      <!-- ===== 总账本 - 记收入 ===== -->
+      <block wx:elif="{{bookType === 'main' && recordType === 'income'}}">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <input class="weui-input" type="digit" placeholder="金额 *" value="{{form.amount}}" bindinput="onFieldInput" data-field="amount" />
+          </view>
         </view>
-        <view class="form-item">
-          <text class="form-label">领用人</text>
-          <input class="form-input" placeholder="领用人" value="{{form.receiver}}" bindinput="onFieldInput" data-field="receiver" />
+        <view class="weui-cell weui-cell_access">
+          <view class="weui-cell__bd">
+            <view class="weui-cell_title">收入类型</view>
+          </view>
+          <view class="weui-cell__ft">
+            <picker range="{{incomeTypes}}" value="{{incomeTypeIndex}}" bindchange="onIncomeTypeChange">
+              {{incomeTypes[incomeTypeIndex]}}
+            </picker>
+          </view>
+        </view>
+        <view wx:if="{{incomeTypeIndex === 1}}" class="weui-cell weui-cell_access">
+          <view class="weui-cell__bd">
+            <view class="weui-cell_title">来源子账本</view>
+          </view>
+          <view class="weui-cell__ft">
+            <picker range="{{subBookNames}}" value="{{subBookIndex}}" bindchange="onSubBookChange">
+              {{subBookNames.length > 0 ? subBookNames[subBookIndex] : '暂无子账本'}}
+            </picker>
+          </view>
+        </view>
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <textarea class="weui-textarea" placeholder="备注（可选）" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" style="min-height:60px" />
+          </view>
+        </view>
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <view class="weui-cell_title">附件图片</view>
+          </view>
+        </view>
+        <view style="padding:0 16px 16px">
+          <view class="flex-wrap">
+            <block wx:for="{{form.attachments}}" wx:key="*this">
+              <image src="{{item}}" mode="aspectFill" style="width:72px;height:72px;border-radius:4px;margin-right:8px;margin-bottom:8px" bindtap="previewAttach" data-src="{{item}}"></image>
+            </block>
+            <view wx:if="{{form.attachments.length < 9}}" bindtap="uploadAttach" style="width:72px;height:72px;border:1px dashed var(--weui-FG-3);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--weui-FG-3)">
+              <text>+</text>
+            </view>
+          </view>
         </view>
       </block>
 
-      <view class="form-item">
-        <text class="form-label">备注</text>
-        <textarea class="form-textarea" placeholder="可选" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" />
-      </view>
-    </block>
+      <!-- ===== 总账本 - 记支出 ===== -->
+      <block wx:elif="{{bookType === 'main' && recordType === 'expense'}}">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <input class="weui-input" type="digit" placeholder="金额 *" value="{{form.amount}}" bindinput="onFieldInput" data-field="amount" />
+          </view>
+        </view>
+        <view class="weui-cell weui-cell_access">
+          <view class="weui-cell__bd">
+            <view class="weui-cell_title">支出分类</view>
+          </view>
+          <view class="weui-cell__ft">
+            <picker range="{{expenseCategories}}" value="{{expenseCategoryIndex}}" bindchange="onExpenseCategoryChange">
+              {{expenseCategories[expenseCategoryIndex]}}
+            </picker>
+          </view>
+        </view>
+
+        <view class="weui-cell">
+          <view class="weui-cell__bd" style="display:flex;justify-content:space-between;align-items:center">
+            <view class="weui-cell_title">物品明细</view>
+            <text class="weui-text_link" bindtap="addExpenseItem" style="font-size:14px">+ 添加</text>
+          </view>
+        </view>
+        <block wx:for="{{form.items}}" wx:key="index">
+          <view style="background:var(--weui-BG-1);margin:0 16px 12px;padding:16px;border-radius:8px">
+            <view class="flex-between" style="margin-bottom:8px">
+              <text class="weui-text_desc">物品 {{index + 1}}</text>
+              <text class="weui-text_red" bindtap="removeExpenseItem" data-index="{{index}}" style="font-size:12px">删除</text>
+            </view>
+            <view class="flex-row" style="gap:8px">
+              <input class="weui-input" style="flex:2" placeholder="名称" value="{{item.name}}" bindinput="onExpenseItemInput" data-index="{{index}}" data-field="name" />
+              <input class="weui-input" style="flex:1" type="number" placeholder="数量" value="{{item.quantity}}" bindinput="onExpenseItemInput" data-index="{{index}}" data-field="quantity" />
+              <input class="weui-input" style="flex:1" type="digit" placeholder="单价" value="{{item.price}}" bindinput="onExpenseItemInput" data-index="{{index}}" data-field="price" />
+            </view>
+          </view>
+        </block>
+
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <textarea class="weui-textarea" placeholder="备注（可选）" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" style="min-height:60px" />
+          </view>
+        </view>
+      </block>
+
+      <!-- ===== 仓库账本 - 入库/出库 ===== -->
+      <block wx:elif="{{bookType === 'warehouse'}}">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <input class="weui-input" placeholder="物品名称 *" value="{{form.itemName}}" bindinput="onFieldInput" data-field="itemName" />
+          </view>
+        </view>
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <input class="weui-input" type="number" placeholder="数量 *" value="{{form.quantity}}" bindinput="onFieldInput" data-field="quantity" />
+          </view>
+        </view>
+        <view class="weui-cell weui-cell_access">
+          <view class="weui-cell__bd">
+            <view class="weui-cell_title">单位</view>
+          </view>
+          <view class="weui-cell__ft">
+            <picker range="{{units}}" value="{{unitIndex}}" bindchange="onUnitChange">
+              {{units[unitIndex]}}
+            </picker>
+          </view>
+        </view>
+
+        <block wx:if="{{recordType === 'stockin'}}">
+          <view class="weui-cell">
+            <view class="weui-cell__bd">
+              <input class="weui-input" type="digit" placeholder="单价（可选）" value="{{form.price}}" bindinput="onFieldInput" data-field="price" />
+            </view>
+          </view>
+          <view class="weui-cell weui-cell_access">
+            <view class="weui-cell__bd">
+              <view class="weui-cell_title">来源</view>
+            </view>
+            <view class="weui-cell__ft">
+              <picker range="{{sourceTypes}}" value="{{sourceIndex}}" bindchange="onSourceChange">
+                {{sourceTypes[sourceIndex]}}
+              </picker>
+            </view>
+          </view>
+        </block>
+
+        <block wx:if="{{recordType === 'stockout'}}">
+          <view class="weui-cell">
+            <view class="weui-cell__bd">
+              <input class="weui-input" placeholder="用途说明" value="{{form.purpose}}" bindinput="onFieldInput" data-field="purpose" />
+            </view>
+          </view>
+          <view class="weui-cell">
+            <view class="weui-cell__bd">
+              <input class="weui-input" placeholder="领用人" value="{{form.receiver}}" bindinput="onFieldInput" data-field="receiver" />
+            </view>
+          </view>
+        </block>
+
+        <view class="weui-cell">
+          <view class="weui-cell__bd">
+            <textarea class="weui-textarea" placeholder="备注（可选）" value="{{form.remark}}" bindinput="onFieldInput" data-field="remark" style="min-height:60px" />
+          </view>
+        </view>
+      </block>
+    </view>
   </view>
 
   <!-- 提交按钮 -->
-  <view class="mt-30 mb-30">
-    <button class="btn-primary" style="width:100%" bindtap="submitRecord" loading="{{submitting}}">提交</button>
+  <view class="p-16">
+    <button class="weui-btn weui-btn_primary weui-btn_block" bindtap="submitRecord" loading="{{submitting}}">提交</button>
   </view>
 </view>
 
 <!-- 收款码弹窗 -->
-<view class="modal-mask" wx:if="{{showQR}}" catchtap="hideQRCode">
-  <view class="modal-content text-center" catchtap="stopPropagation">
-    <image src="{{qrCodeUrl}}" mode="widthFix" style="width:100%"></image>
-    <button class="btn-outline mt-20" bindtap="hideQRCode">关闭</button>
+<view class="weui-mask" wx:if="{{showQR}}" bindtap="hideQRCode">
+  <view class="weui-dialog" catchtap="stopPropagation">
+    <view class="weui-dialog__bd" style="text-align:center">
+      <image src="{{qrCodeUrl}}" mode="widthFix" style="width:100%"></image>
+    </view>
+    <view class="weui-dialog__ft">
+      <view class="weui-dialog__btn weui-dialog__btn_primary" bindtap="hideQRCode">关闭</view>
+    </view>
   </view>
 </view>
