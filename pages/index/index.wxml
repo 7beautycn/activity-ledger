@@ -1,13 +1,24 @@
 <!--pages/index/index.wxml-->
 <view class="container">
   <!-- Tab切换 -->
-  <view class="weui-panel" style="padding:0">
+  <view class="weui-panel tab-bar">
     <view style="display:flex">
       <view class="tab-item {{activeTab === 'active' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="active">
         <text>进行中</text>
       </view>
       <view class="tab-item {{activeTab === 'archived' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="archived">
         <text>已归档</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 删除模式工具栏 -->
+  <view class="delete-toolbar" wx:if="{{deleteMode}}">
+    <text class="delete-toolbar__title">已选 {{selectedIds.length}} 项</text>
+    <view class="delete-toolbar__actions">
+      <text class="delete-toolbar__cancel" bindtap="exitDeleteMode">取消</text>
+      <view class="delete-toolbar__confirm {{selectedIds.length === 0 ? 'disabled' : ''}}" bindtap="batchDelete">
+        删除
       </view>
     </view>
   </view>
@@ -20,28 +31,48 @@
   <!-- 活动列表 -->
   <block wx:elif="{{activities.length > 0}}">
     <view class="weui-panel" wx:for="{{activities}}" wx:key="_id">
-      <view class="weui-cell weui-cell_access" bindtap="goToActivity" data-id="{{item._id}}">
-        <view class="weui-cell__bd">
-          <view class="weui-cell_title">{{item.name}}</view>
-          <view class="weui-cell_desc" style="margin-top:6px">
-            <text class="weui-tag {{item.status === 'active' ? 'weui-tag_green' : 'weui-tag_default'}}" style="margin-right:8px">{{item.status === 'active' ? '进行中' : '已归档'}}</text>
-            <text>{{item.startDate}} ~ {{item.endDate}}</text>
+      <view class="activity-item {{deleteMode ? 'delete-mode' : ''}}" 
+            bindtap="{{deleteMode ? 'onSelectItem' : 'goToActivity'}}" 
+            bindlongpress="onLongPress"
+            data-id="{{item._id}}">
+        
+        <!-- 删除模式下的复选框 -->
+        <view class="select-box" wx:if="{{deleteMode}}">
+          <view class="checkbox {{selectedIds.indexOf(item._id) > -1 ? 'checked' : ''}}">
+            <text wx:if="{{selectedIds.indexOf(item._id) > -1}}">✓</text>
           </view>
         </view>
-        <view class="weui-cell__ft">
-          <text class="weui-text_desc">{{item.location || ''}}</text>
+
+        <view class="activity-body">
+          <view class="weui-cell weui-cell_access">
+            <view class="weui-cell__bd">
+              <view class="weui-cell_title">{{item.name}}</view>
+              <view class="weui-cell_desc" style="margin-top:6px">
+                <text class="weui-tag {{item.status === 'active' ? 'weui-tag_green' : 'weui-tag_default'}}" style="margin-right:8px">{{item.status === 'active' ? '进行中' : '已归档'}}</text>
+                <text>{{item.startDate}} ~ {{item.endDate}}</text>
+              </view>
+            </view>
+            <view class="weui-cell__ft">
+              <text class="weui-text_desc">{{item.location || ''}}</text>
+            </view>
+          </view>
+          <view class="weui-stat-row">
+            <view class="text-center">
+              <view class="weui-stat-item__label">账本</view>
+              <view class="weui-stat-item__value weui-text_green">{{item.bookCount || 0}}</view>
+            </view>
+            <view class="text-center">
+              <view class="weui-stat-item__label">成员</view>
+              <view class="weui-stat-item__value" style="color:var(--weui-BLUE)">{{item.memberCount || 0}}</view>
+            </view>
+          </view>
         </view>
       </view>
-      <view class="weui-stat-row">
-        <view class="text-center">
-          <view class="weui-stat-item__label">账本</view>
-          <view class="weui-stat-item__value weui-text_green">{{item.bookCount || 0}}</view>
-        </view>
-        <view class="text-center">
-          <view class="weui-stat-item__label">成员</view>
-          <view class="weui-stat-item__value" style="color:var(--weui-BLUE)">{{item.memberCount || 0}}</view>
-        </view>
-      </view>
+    </view>
+
+    <!-- 删除模式提示 -->
+    <view wx:if="{{deleteMode}}" class="delete-hint">
+      <text>长按进入删除模式，勾选后点击上方"删除"</text>
     </view>
   </block>
 
@@ -54,8 +85,8 @@
     </view>
   </block>
 
-  <!-- 底部创建按钮 -->
-  <view class="weui-bottom-bar">
+  <!-- 底部创建按钮（删除模式下隐藏） -->
+  <view class="weui-bottom-bar" wx:if="{{!deleteMode}}">
     <button class="weui-btn weui-btn_primary weui-btn_block" bindtap="showCreateDialog">+ 创建活动</button>
   </view>
 </view>

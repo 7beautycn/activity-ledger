@@ -8,6 +8,9 @@ Page({
     loading: true,
     showCreate: false,
     creating: false,
+    // 多选删除相关
+    deleteMode: false,
+    selectedIds: [],
     newActivity: {
       name: '',
       startDate: '',
@@ -27,7 +30,8 @@ Page({
   // 切换Tab
   switchTab(e) {
     const tab = e.currentTarget.dataset.tab
-    this.setData({ activeTab: tab })
+    // 切换 Tab 时退出删除模式
+    this.setData({ activeTab: tab, deleteMode: false, selectedIds: [] })
     this.loadActivities()
   },
 
@@ -41,7 +45,9 @@ Page({
       })
       this.setData({
         activities: res.result.activities || [],
-        loading: false
+        loading: false,
+        deleteMode: false,
+        selectedIds: []
       })
     } catch (err) {
       console.error('加载活动失败', err)
@@ -112,8 +118,75 @@ Page({
     }
   },
 
-  // 跳转到活动详情
+  // ===== 多选删除 =====
+
+  // 长按进入删除模式
+  onLongPress(e) {
+    const id = e.currentTarget.dataset.id
+    wx.vibrateShort()
+    this.setData({
+      deleteMode: true,
+      selectedIds: [id]
+    })
+  },
+
+  // 点击选中/取消
+  onSelectItem(e) {
+    if (!this.data.deleteMode) return
+    const id = e.currentTarget.dataset.id
+    let selected = [...this.data.selectedIds]
+    const idx = selected.indexOf(id)
+    if (idx > -1) {
+      selected.splice(idx, 1)
+    } else {
+      selected.push(id)
+    }
+    // 如果全部取消选中，退出删除模式
+    if (selected.length === 0) {
+      this.setData({ deleteMode: false, selectedIds: [] })
+    } else {
+      this.setData({ selectedIds: selected })
+    }
+  },
+
+  // 退出删除模式
+  exitDeleteMode() {
+    this.setData({ deleteMode: false, selectedIds: [] })
+  },
+
+  // 批量删除
+  async batchDelete() {
+    const count = this.data.selectedIds.length
+    const confirmed = await util.showConfirm(`确定要删除选中的 ${count} 个活动吗？删除后数据无法恢复。`, '确认删除')
+    if (!confirmed) return
+
+    util.showLoading('删除中...')
+    let failed = 0
+    for (const id of this.data.selectedIds) {
+      try {
+        const res = await wx.cloud.callFunction({
+          name: 'deleteActivity',
+          data: { activityId: id }
+        })
+        if (!res.result.success) failed++
+      } catch (err) {
+        failed++
+      }
+    }
+    util.hideLoading()
+
+    if (failed === 0) {
+      util.showToast(`已删除 ${count} 个活动`, 'success')
+    } else {
+      util.showToast(`删除完成，${failed} 个失败`)
+    }
+    this.setData({ deleteMode: false, selectedIds: [] })
+    this.loadActivities()
+  },
+
+  // 跳转到活动详情（非删除模式下）
   goToActivity(e) {
+    if (this.data.deleteMode) return
     const id = e.currentTarget.dataset.id
     wx.navigateTo({ url: `/pages/activity-detail/activity-detail?id=${id}` })
   }

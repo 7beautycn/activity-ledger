@@ -1,4 +1,10 @@
 /** pages/index/index.wxss **/
+
+/* Tab 区域顶部留白 */
+.tab-bar {
+  margin-top: 16px;
+}
+
 .tab-item {
   flex: 1;
   text-align: center;
@@ -27,6 +33,94 @@
 
 .tab-active::after {
   background: var(--weui-BRAND);
+}
+
+/* ===== 删除模式工具栏 ===== */
+.delete-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #fff;
+  border-bottom: 1px solid var(--weui-BG-1);
+}
+
+.delete-toolbar__title {
+  font-size: 15px;
+  color: var(--weui-FG-1);
+}
+
+.delete-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.delete-toolbar__cancel {
+  font-size: 14px;
+  color: var(--weui-LINK);
+}
+
+.delete-toolbar__confirm {
+  font-size: 14px;
+  color: #fff;
+  background: var(--weui-RED);
+  padding: 6px 18px;
+  border-radius: 6px;
+}
+
+.delete-toolbar__confirm.disabled {
+  background: var(--weui-BG-2);
+  color: var(--weui-FG-3);
+}
+
+/* ===== 活动列表项 ===== */
+.activity-item {
+  display: flex;
+  align-items: stretch;
+}
+
+.activity-item.delete-mode {
+  background: var(--weui-BG-1);
+}
+
+/* 复选框 */
+.select-box {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--weui-FG-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: transparent;
+  flex-shrink: 0;
+}
+
+.checkbox.checked {
+  border-color: var(--weui-BRAND);
+  background: var(--weui-BRAND);
+  color: #fff;
+}
+
+.activity-body {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 删除提示 */
+.delete-hint {
+  text-align: center;
+  padding: 20px 16px;
+  font-size: 13px;
+  color: var(--weui-FG-2);
 }
 
 /* 日期选择器样式 */
