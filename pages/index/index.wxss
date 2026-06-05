@@ -35,3 +35,25 @@
 .tab-active::after {
   background: var(--weui-BRAND);
 }
+
+/* 日期选择器样式 */
+.picker-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  min-height: 44px;
+  font-size: 16px;
+  color: var(--weui-FG-0);
+  background: var(--weui-BG-1);
+  border-radius: 8px;
+}
+
+.picker-placeholder {
+  color: var(--weui-FG-2);
+}
+
+.picker-arrow {
+  font-size: 12px;
+  color: var(--weui-FG-2);
+}

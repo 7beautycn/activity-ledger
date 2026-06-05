@@ -88,8 +88,9 @@
       <view class="weui-form__item">
         <text class="weui-form__label">开始日期 *</text>
         <picker mode="date" value="{{newActivity.startDate}}" bindchange="onStartDateChange">
-          <view class="weui-picker {{newActivity.startDate ? '' : 'weui-picker_placeholder'}}">
+          <view class="picker-value {{newActivity.startDate ? '' : 'picker-placeholder'}}">
             {{newActivity.startDate || '请选择开始日期'}}
+            <text class="picker-arrow">▼</text>
           </view>
         </picker>
       </view>
@@ -97,8 +98,9 @@
       <view class="weui-form__item">
         <text class="weui-form__label">结束日期</text>
         <picker mode="date" value="{{newActivity.endDate}}" bindchange="onEndDateChange">
-          <view class="weui-picker {{newActivity.endDate ? '' : 'weui-picker_placeholder'}}">
+          <view class="picker-value {{newActivity.endDate ? '' : 'picker-placeholder'}}">
             {{newActivity.endDate || '请选择结束日期'}}
+            <text class="picker-arrow">▼</text>
           </view>
         </picker>
       </view>
