@@ -1,2 +1,9 @@
 /** pages/book-detail/book-detail.wxss **/
 /* 使用全局 WeUI 样式 */
+
+/* 账本头部操作按钮 */
+.book-header-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}

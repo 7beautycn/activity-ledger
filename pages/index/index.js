@@ -117,16 +117,37 @@ Page({
     }
   },
 
-  // ===== 多选删除 =====
+  // ===== 导航 =====
 
   // 统一的点击处理：根据 deleteMode 分发
   onActivityTap(e) {
     if (this.data.deleteMode) {
       this.onSelectItem(e)
     } else {
-      this.goToActivity(e)
+      this.goToMainBook(e)
     }
   },
+
+  // 点击活动 → 直接进入主账本
+  goToMainBook(e) {
+    const { id, mainBookId } = e.currentTarget.dataset
+    if (!mainBookId) {
+      util.showToast('该活动暂无主账本')
+      return
+    }
+    wx.navigateTo({ 
+      url: `/pages/book-detail/book-detail?id=${mainBookId}&type=main&activityId=${id}` 
+    })
+  },
+
+  // 点击设置图标 → 进入活动详情
+  onSettingsTap(e) {
+    if (this.data.deleteMode) return
+    const id = e.currentTarget.dataset.id
+    wx.navigateTo({ url: `/pages/activity-detail/activity-detail?id=${id}` })
+  },
+
+  // ===== 多选删除 =====
 
   // 长按进入删除模式
   onLongPress(e) {
@@ -195,11 +216,5 @@ Page({
     }
     this.setData({ deleteMode: false, selectedIds: [] })
     this.loadActivities()
-  },
-
-  // 跳转到活动详情（非删除模式下）
-  goToActivity(e) {
-    const id = e.currentTarget.dataset.id
-    wx.navigateTo({ url: `/pages/activity-detail/activity-detail?id=${id}` })
   }
 })

@@ -122,6 +122,39 @@
   min-width: 0;
 }
 
+/* ===== 设置图标 ===== */
+.activity-actions {
+  display: flex;
+  align-items: center;
+  padding-right: 0;
+}
+
+.settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--weui-BG-1);
+  transition: background 0.2s;
+}
+
+.settings-btn:active {
+  background: var(--weui-BG-2);
+}
+
+.settings-icon {
+  font-size: 18px;
+  color: var(--weui-FG-2);
+  line-height: 1;
+}
+
+/* 删除模式下隐藏设置图标 */
+.activity-item.delete-mode .settings-btn {
+  display: none;
+}
+
 /* 删除提示 */
 .delete-hint {
   text-align: center;

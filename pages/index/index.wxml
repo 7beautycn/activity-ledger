@@ -46,6 +46,7 @@
             bindtap="onActivityTap" 
             bindlongpress="onLongPress"
             data-id="{{item._id}}"
+            data-main-book-id="{{item.mainBookId}}"
             data-index="{{index}}">
         
         <!-- 删除模式下的复选框 -->
@@ -64,8 +65,10 @@
                 <text>{{item.startDate}} ~ {{item.endDate}}</text>
               </view>
             </view>
-            <view class="weui-cell__ft">
-              <text class="weui-text_desc">{{item.location || ''}}</text>
+            <view class="weui-cell__ft activity-actions">
+              <view class="settings-btn" bindtap="onSettingsTap" data-id="{{item._id}}" catchtap="onSettingsTap">
+                <text class="settings-icon">⚙</text>
+              </view>
             </view>
           </view>
           <view class="weui-stat-row">

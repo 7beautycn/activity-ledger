@@ -44,16 +44,18 @@ exports.main = async (event, context) => {
       .orderBy('createTime', 'desc')
       .get()
 
-    // 为每个活动添加账本数量和成员数量
+    // 为每个活动添加账本数量、成员数量和主账本ID
     const activities = await Promise.all(activityRes.data.map(async (activity) => {
-      const [bookCount, memberCount] = await Promise.all([
+      const [bookCount, memberCount, mainBookRes] = await Promise.all([
         db.collection('books').where({ activityId: activity._id }).count(),
-        db.collection('members').where({ activityId: activity._id }).count()
+        db.collection('members').where({ activityId: activity._id }).count(),
+        db.collection('books').where({ activityId: activity._id, type: 'main' }).get()
       ])
       return {
         ...activity,
         bookCount: bookCount.total,
-        memberCount: memberCount.total
+        memberCount: memberCount.total,
+        mainBookId: mainBookRes.data[0]?._id || null
       }
     }))
 

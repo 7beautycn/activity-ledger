@@ -134,6 +134,13 @@ Page({
     })
   },
 
+  // 跳转活动详情（从主账本）
+  goToActivityDetail() {
+    wx.navigateTo({
+      url: `/pages/activity-detail/activity-detail?id=${this.data.activityId}`
+    })
+  },
+
   // 跳转统计
   goToStatistics() {
     wx.navigateTo({

@@ -9,8 +9,9 @@
           <text class="weui-tag {{tagClass}}">{{typeLabel}}</text>
         </view>
       </view>
-      <view class="weui-cell__ft" wx:if="{{bookType === 'main'}}" bindtap="goToStatistics">
-        <text class="weui-text_link">统计</text>
+      <view class="weui-cell__ft book-header-actions">
+        <text wx:if="{{bookType === 'main'}}" class="weui-text_link" bindtap="goToActivityDetail" style="margin-right:16px">活动</text>
+        <text wx:if="{{bookType === 'main'}}" class="weui-text_link" bindtap="goToStatistics">统计</text>
       </view>
     </view>
     
