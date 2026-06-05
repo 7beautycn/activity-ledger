@@ -1,5 +1,5 @@
 {
-  "description": "公共活动共享账本 - 微信小程序",
+  "description": "欧少记账 - 微信小程序",
   "packOptions": {
     "ignore": [],
     "include": []
@@ -46,7 +46,7 @@
   "compileType": "miniprogram",
   "libVersion": "2.25.4",
   "appid": "touristappid",
-  "projectname": "public-ledger",
+  "projectname": "oushao-ledger",
   "cloudfunctionRoot": "cloudfunctions/",
   "condition": {},
   "editorSetting": {
