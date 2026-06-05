@@ -84,11 +84,18 @@
   background: var(--weui-BG-1);
 }
 
+/* 删除模式下统一活动项内部元素背景 */
+.activity-item.delete-mode .weui-cell,
+.activity-item.delete-mode .weui-stat-row {
+  background: transparent;
+}
+
 /* 复选框 */
 .select-box {
   display: flex;
   align-items: center;
   padding-left: 16px;
+  flex-shrink: 0;
 }
 
 .checkbox {
@@ -101,7 +108,7 @@
   justify-content: center;
   font-size: 13px;
   color: transparent;
-  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .checkbox.checked {

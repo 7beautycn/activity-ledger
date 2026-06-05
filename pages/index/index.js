@@ -30,7 +30,6 @@ Page({
   // 切换Tab
   switchTab(e) {
     const tab = e.currentTarget.dataset.tab
-    // 切换 Tab 时退出删除模式
     this.setData({ activeTab: tab, deleteMode: false, selectedIds: [] })
     this.loadActivities()
   },
@@ -120,6 +119,15 @@ Page({
 
   // ===== 多选删除 =====
 
+  // 统一的点击处理：根据 deleteMode 分发
+  onActivityTap(e) {
+    if (this.data.deleteMode) {
+      this.onSelectItem(e)
+    } else {
+      this.goToActivity(e)
+    }
+  },
+
   // 长按进入删除模式
   onLongPress(e) {
     const id = e.currentTarget.dataset.id
@@ -132,7 +140,6 @@ Page({
 
   // 点击选中/取消
   onSelectItem(e) {
-    if (!this.data.deleteMode) return
     const id = e.currentTarget.dataset.id
     let selected = [...this.data.selectedIds]
     const idx = selected.indexOf(id)
@@ -157,7 +164,12 @@ Page({
   // 批量删除
   async batchDelete() {
     const count = this.data.selectedIds.length
-    const confirmed = await util.showConfirm(`确定要删除选中的 ${count} 个活动吗？删除后数据无法恢复。`, '确认删除')
+    if (count === 0) return
+
+    const confirmed = await util.showConfirm(
+      `确定要删除选中的 ${count} 个活动吗？删除后数据无法恢复。`, 
+      '确认删除'
+    )
     if (!confirmed) return
 
     util.showLoading('删除中...')
@@ -168,8 +180,9 @@ Page({
           name: 'deleteActivity',
           data: { activityId: id }
         })
-        if (!res.result.success) failed++
+        if (!res.result || !res.result.success) failed++
       } catch (err) {
+        console.error('删除活动失败', id, err)
         failed++
       }
     }
@@ -186,7 +199,6 @@ Page({
 
   // 跳转到活动详情（非删除模式下）
   goToActivity(e) {
-    if (this.data.deleteMode) return
     const id = e.currentTarget.dataset.id
     wx.navigateTo({ url: `/pages/activity-detail/activity-detail?id=${id}` })
   }

@@ -1,4 +1,15 @@
 <!--pages/index/index.wxml-->
+<wxs module="utils">
+  var indexOf = function(arr, item) {
+    if (!arr) return -1;
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i] === item) return i;
+    }
+    return -1;
+  }
+  module.exports.indexOf = indexOf;
+</wxs>
+
 <view class="container">
   <!-- Tab切换 -->
   <view class="weui-panel tab-bar">
@@ -32,14 +43,15 @@
   <block wx:elif="{{activities.length > 0}}">
     <view class="weui-panel" wx:for="{{activities}}" wx:key="_id">
       <view class="activity-item {{deleteMode ? 'delete-mode' : ''}}" 
-            bindtap="{{deleteMode ? 'onSelectItem' : 'goToActivity'}}" 
+            bindtap="onActivityTap" 
             bindlongpress="onLongPress"
-            data-id="{{item._id}}">
+            data-id="{{item._id}}"
+            data-index="{{index}}">
         
         <!-- 删除模式下的复选框 -->
         <view class="select-box" wx:if="{{deleteMode}}">
-          <view class="checkbox {{selectedIds.indexOf(item._id) > -1 ? 'checked' : ''}}">
-            <text wx:if="{{selectedIds.indexOf(item._id) > -1}}">✓</text>
+          <view class="checkbox {{utils.indexOf(selectedIds, item._id) > -1 ? 'checked' : ''}}">
+            <text wx:if="{{utils.indexOf(selectedIds, item._id) > -1}}">✓</text>
           </view>
         </view>
 
@@ -70,9 +82,9 @@
       </view>
     </view>
 
-    <!-- 删除模式提示 -->
+    <!-- 删除模式底部提示 -->
     <view wx:if="{{deleteMode}}" class="delete-hint">
-      <text>长按进入删除模式，勾选后点击上方"删除"</text>
+      <text>点击勾选活动，选完后点上方「删除」确认</text>
     </view>
   </block>
 
