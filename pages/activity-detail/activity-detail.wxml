@@ -104,22 +104,8 @@
     </view>
     <view class="weui-dialog__bd">
       <view class="weui-form__item">
-        <text class="weui-form__label">账本类型 *</text>
-        <picker range="{{bookTypeOptions}}" value="{{newBookTypeIndex}}" bindchange="onBookTypeChange">
-          <view class="weui-picker">{{bookTypeOptions[newBookTypeIndex] || '请选择账本类型'}}</view>
-        </picker>
-      </view>
-      <view class="weui-form__item">
         <text class="weui-form__label">账本名称</text>
         <input class="weui-input" placeholder="如：收礼记录本" value="{{newBookName}}" bindinput="onBookNameInput" />
-      </view>
-      <view class="weui-form__item">
-        <text class="weui-form__label">负责人 *</text>
-        <picker range="{{memberNames}}" value="{{selectedMemberIndex}}" bindchange="onMemberChange">
-          <view class="weui-picker {{selectedMemberIndex >= 0 ? '' : 'weui-picker_placeholder'}}">
-            {{selectedMemberIndex >= 0 ? memberNames[selectedMemberIndex] : '请选择负责人'}}
-          </view>
-        </picker>
       </view>
     </view>
     <view class="weui-dialog__ft">

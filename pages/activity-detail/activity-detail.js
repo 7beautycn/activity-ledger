@@ -13,10 +13,7 @@ Page({
     loading: true,
     showCreateBook: false,
     creating: false,
-    bookTypeOptions: ['收礼账本 (gift)', '仓库账本 (warehouse)'],
-    newBookTypeIndex: 0,
-    newBookName: '',
-    selectedMemberIndex: -1
+    newBookName: ''
   },
 
   onLoad(options) {
@@ -131,45 +128,27 @@ Page({
 
   // 创建子账本弹窗
   showCreateBookDialog() {
-    if (this.data.members.length === 0) {
-      util.showToast('请先邀请成员')
-      return
-    }
-    this.setData({ showCreateBook: true, selectedMemberIndex: -1 })
+    this.setData({ showCreateBook: true })
   },
   hideCreateBookDialog() {
     this.setData({ showCreateBook: false })
   },
   stopPropagation() {},
-  onBookTypeChange(e) {
-    this.setData({ newBookTypeIndex: parseInt(e.detail.value) })
-  },
   onBookNameInput(e) {
     this.setData({ newBookName: e.detail.value })
   },
-  onMemberChange(e) {
-    this.setData({ selectedMemberIndex: parseInt(e.detail.value) })
-  },
 
-  // 创建子账本
+  // 创建子账本（默认类型gift，负责人为活动主事人）
   async createSubBook() {
-    if (this.data.selectedMemberIndex < 0) {
-      util.showToast('请选择负责人')
-      return
-    }
-    
-    const bookTypes = ['gift', 'warehouse']
-    const member = this.data.members[this.data.selectedMemberIndex]
-    
     this.setData({ creating: true })
     try {
       await wx.cloud.callFunction({
         name: 'createSubBook',
         data: {
           activityId: this.data.activityId,
-          type: bookTypes[this.data.newBookTypeIndex],
-          name: this.data.newBookName || this.data.bookTypeOptions[this.data.newBookTypeIndex],
-          ownerId: member.userId
+          type: 'gift',
+          name: this.data.newBookName || '子账本',
+          ownerId: this.data.activity.creatorId
         }
       })
       util.showToast('创建成功', 'success')
